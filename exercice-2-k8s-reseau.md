@@ -145,4 +145,6 @@ curl -s 35.205.60.29 | grep h1
 ```
 
 -> Félicitations vous savez ajouter des services et manipuler les bases du réseau de K8s
-
+* NB : sur Minikube en local, aucun système de load balancing n'est en place, vous n'obtiendrez donc pas d'adresse IP externe (publique), si vous voulez en obtenir une il faut :
+* * soit utiliser un fournisseur de cloud qui inclut ce service 
+* * soit configurer un outil de load balancing en local (il est possible d'utiliser minikube tunnel, qui permet d'accèder sur l'hote de Minikube, donc dans nos exercices sur la VM, à l'adresse IP externe : https://minikube.sigs.k8s.io/docs/handbook/accessing/ )
