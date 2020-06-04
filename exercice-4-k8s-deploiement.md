@@ -89,7 +89,7 @@ From another terminal on your machine check (using load balancer IP) which versi
 $ while true; do  curl -sI 35.205.60.29  | grep Server; sleep 2; done
 ```
 
-## Update Deployment
+### Update Deployment
 
 Rollout an update to the image:
 
@@ -124,7 +124,7 @@ what happened - do the curl operation still work?  Investigate the running pods 
 $ kubectl get pods
 ```
 
-## Undo Update
+### Undo Update
 
 The rollout above using a non-existing image version caused some pods to be
 non-functioning. Next, we will undo this faulty deployment. First, investigate
@@ -146,14 +146,7 @@ Investigate the running pods:
 $ kubectl get pods
 ```
 
-## Clean up
 
-Delete deployments and services as follow:
-
-```shell
-$ kubectl delete deployment nginx
-$ kubectl delete service nginx
-```
 ## D'ajouter des vérifications de l'état de vos containers (healthchecks)
 Working with Kubernetes, you eventually need to understand the "magic". 
 
