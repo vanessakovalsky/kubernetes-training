@@ -3,7 +3,6 @@
 Cet exercice a pour objetifs 
 * de manipuler les éléments du réseau d'un cluster Kubernetes
 * d'exposer un service fonctionnant dans un cluster au reste du monde
-* d'explorer les possibilités de la haute disponibilité
 
 ## Accéder à un service
 * Pour commencer nous allons lancer deux pods :
@@ -74,6 +73,76 @@ curl -s 100.70.204.237 | grep h1
 
 ### NodePort
 
-## Haute disponibilité
+* On récupère le nom de notre service :
+```
+kubectl get svc
+```
+* Ce qui affiche :
+```
+NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+nginx        ClusterIP   100.70.204.237   <none>        80/TCP    15m
+```
+* On supprime le service précédent:
+```
+kubectl delete svc nginx
+```
+* Puis on recréé un service de type NodePort:
+```
+kubectl expose deployment nginx --port 80 --type NodePort
+```
+* En affichant les services de nouveaux quelle différence remarquez vous ?:
+```
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx        NodePort    100.65.29.172  <none>        80:32593/TCP   8s
+```
+* Il n'y a toujours pas d'adresse IP externe, par contre le port 80 est mappé sur le port 32593, cela signifie que nous pouvons accéders à notre pod, via l'IP du node et le port 32593
+* Pour obtenir l'IP du node :
+```
+kubectl get nodes -o wide
+```
+* On obtient un resultat comme celui-ci :
+```
+NAME                                            STATUS    ROLES     AGE       VERSION        EXTERNAL-IP     OS-IMAGE                             KERNEL-VERSION   CONTAINER-RUNTIME
+gke-dcn-cluster-35-default-pool-dacbcf6d-3918   Ready     <none>    17h       v1.8.8-gke.0   35.205.22.139   Container-Optimized OS from Google   4.4.111+         docker://17.3.2
+gke-dcn-cluster-35-default-pool-dacbcf6d-c87z   Ready     <none>    17h       v1.8.8-gke.0   35.187.90.36    Container-Optimized OS from Google   4.4.111+         docker://17.3.2
+```
+* Il ne reste plus qu'à tester avec l'IP du Node concerné :
+```
+curl -s 35.205.22.139:32593 | grep h1
+```
+* Qui devrait afficher :
+```
+<h1>Welcome to nginx!</h1>
+```
+* Nous pouvons maintenant accéder au POD, via l'IP du Node, ce qui signifie qu'il est nécessaire de fournir l'adresse IP du Node, hors celle-ci peut changer et donc devoir être modifié. 
 
+### Load Balancer 
+Le service de type load balancer va permettre d'obtenir une adresse IP externe pour le cluster et ainsi d'accéder aux applications dans les pods, sans besoin de connaitre l'IP des nodes
+* On commence par supprimer l'ancien service :
+```
+kubectl delete svc nginx
+```
+* Puis on recrée un service de type loadbalancer :
+```
+kubectl expose deployment nginx --port 80 --type LoadBalancer
+```
+* Après quelques minutes votre cluster obtient une adresse IP externe que vous pouvez voir avec :
+```
+kubectl get svc
+```
+* Exemple :
+```
+NAME         TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+nginx        LoadBalancer   100.69.15.89   35.205.60.29  80:31354/TCP   5s
+```
+* Il est maintenant possible d'accéder directement à notre application via l'IP du cluster :
+```
+curl -s 35.205.60.29 | grep h1
+```
+* Renvoit bien : 
+```
+<h1>Welcome to nginx!</h1>
+```
+
+-> Félicitations vous savez ajouter des services et manipuler les bases du réseau de K8s
 
