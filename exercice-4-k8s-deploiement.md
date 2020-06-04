@@ -14,7 +14,7 @@ Nous allons travailler sur la scalabilité de notre pod, afin de permettre d'aug
 kubectl scale deployment nginx --replicas=4
 deployment.extensions/nginx scaled
 ```
-* Vérifier le nombre de pods sur le déploiement :
+* Vérifier le résultat sur les déploiements et les pods :
 
 ```shell
 $ kubectl get deployments
@@ -33,15 +33,15 @@ nginx-569477d6d8-s6lsn       1/1       Running   0          34s
 nginx-569477d6d8-v8srx       1/1       Running   0          35s
 ```
 
-**Notice:** The nginx deployment says Ready=4/4, Up-to-date=4, Available=4. And the pods also show the same. There are now 4 nginx pods running; one of them was already running (being older), and the other three are started just now.
+**NB:** Le déploiement nginx dit Ready=4/4, Up-to-date=4, Available=4. Les pods montre la même chose, il y a maintenant 4 pods nginx qui fonctionnenet. L'un d'eux est le premier a avoir été lancer, et les autres ont été créé quelques secondes auparavant par notre commande précédente.
 
-You can also scale down! - e.g. to 2:
+* Il est également possible de réduire l'échelle, par exemple à 2 :
 
 ```shell
 $ kubectl scale deployment nginx --replicas=2
 deployment.extensions/nginx scaled
 ```
-
+* On vérifie le résultat :
 ```shell
 $ kubectl get pods
 NAME                         READY     STATUS        RESTARTS   AGE
@@ -51,8 +51,7 @@ nginx-569477d6d8-bv77k       0/1       Terminating   0          1m
 nginx-569477d6d8-s6lsn       0/1       Terminating   0          1m
 nginx-569477d6d8-v8srx       1/1       Running       0          2m
 ```
-
-Notice that unnecessary pods are killed immediately.
+* Les pods nont utilisé sont tués immédiatement :
 
 ```shell
 $ kubectl get pods
@@ -61,124 +60,6 @@ multitool-3148954972-k8q06   1/1       Running   0          26m
 nginx-569477d6d8-4msf8       1/1       Running   0          22m
 nginx-569477d6d8-v8srx       1/1       Running   0          2m
 ```
-
-You can delete the nginx deployment and service at this point. We have no use for these anymore. Besides, you can always re-create them.
-
-```shell
-$ kubectl delete deployment nginx
-deployment.extensions "nginx" deleted
-$ kubectl delete service nginx
-service "nginx" deleted
-```
-
-## Extra-credit: High Availability Exercise
-
-To prove that multiple pods of the same deployment provide high availability, we do a small exercise. To visualize it, we need to run a small web server which could return us some unique content when we access it. We will use our trusted multitool for it. Let's run it as a separate deployment and access it from our local computer.
-
-```shell
-$ kubectl create deployment customnginx --image=praqma/network-multitool
-deployment.apps/customnginx created
-$ kubectl scale deployment customnginx --replicas=4
-deployment.extensions/customnginx scaled
-```
-
-```shell
-$ kubectl get pods
-NAME                           READY     STATUS    RESTARTS   AGE
-customnginx-3557040084-1z489   1/1       Running   0          49s
-customnginx-3557040084-3hhlt   1/1       Running   0          49s
-customnginx-3557040084-c6skw   1/1       Running   0          49s
-customnginx-3557040084-fw1t3   1/1       Running   0          49s
-multitool-5f9bdcb789-k7f4q     1/1       Running   0          19m
-```
-
-Let's create a service for this deployment as a type=LoadBalancer:
-
-```shell
-$ kubectl expose deployment customnginx --port=80 --type=LoadBalancer
-service/customnginx exposed
-```
-
-Verify the service and note the public IP address:
-
-```shell
-$ kubectl get services
-NAME          TYPE           CLUSTER-IP    EXTERNAL-IP        PORT(S)        AGE
-customnginx   LoadBalancer   100.67.40.4   35.205.60.41       80:30087/TCP   1m
-```
-
-Query the service, so we know it works as expected:
-
-```shell
-$ curl -s 35.205.60.41
-Praqma Network MultiTool (with NGINX) - customnginx-7cf9899b84-rjgrb - 10.8.2.47/24
-```
-
-Next, setup a small bash loop on your local computer to curl this IP address, and get it's IP address.
-
-```shell
-$ while true; do sleep 1; curl -s 35.205.60.41; done
-Praqma Network MultiTool (with NGINX) - customnginx-7fcfd947cf-zbvtd - 100.96.2.36 <BR></p>
-Praqma Network MultiTool (with NGINX) - customnginx-7fcfd947cf-zbvtd - 100.96.1.150 <BR></p>
-Praqma Network MultiTool (with NGINX) - customnginx-7fcfd947cf-zbvtd - 100.96.2.37 <BR></p>
-Praqma Network MultiTool (with NGINX) - customnginx-7fcfd947cf-zbvtd - 100.96.2.37 <BR></p>
-Praqma Network MultiTool (with NGINX) - customnginx-7fcfd947cf-zbvtd - 100.96.2.36 <BR></p>
-^C
-```
-
-We see that when we query the LoadBalancer IP, it is giving us result/content from all four containers. None of the curl commands is timed out. Now, if we kill three out of four pods, the service should still respond, without timing out. We let the loop run in a separate terminal, and kill three pods of this deployment from another terminal.
-
-```shell
-$ kubectl delete pod customnginx-3557040084-1z489 customnginx-3557040084-3hhlt customnginx-3557040084-c6skw
-pod "customnginx-3557040084-1z489" deleted
-pod "customnginx-3557040084-3hhlt" deleted
-pod "customnginx-3557040084-c6skw" deleted
-```
-
-Immediately check the other terminal for any failed curl commands or timeouts.
-
-```shell
-Container IP: 100.96.1.150 <BR></p>
-Container IP: 100.96.1.150 <BR></p>
-Container IP: 100.96.2.37 <BR></p>
-Container IP: 100.96.1.149 <BR></p>
-Container IP: 100.96.1.149 <BR></p>
-Container IP: 100.96.1.150 <BR></p>
-Container IP: 100.96.2.36 <BR></p>
-Container IP: 100.96.2.37 <BR></p>
-Container IP: 100.96.2.37 <BR></p>
-Container IP: 100.96.2.38 <BR></p>
-Container IP: 100.96.2.38 <BR></p>
-Container IP: 100.96.2.38 <BR></p>
-Container IP: 100.96.1.151 <BR></p>
-```
-
-We notice that no curl command failed, and actually we have started seeing new IPs. Why is that? It is because, as soon as the pods are deleted, the deployment sees that it's desired state is four pods, and there is only one running, so it immediately starts three more to reach that desired state. And, while the pods are in process of starting, one surviving pod takes the traffic.
-
-```shell
-$ kubectl get pods
-NAME                           READY     STATUS        RESTARTS   AGE
-customnginx-3557040084-0s7l8   1/1       Running       0          15s
-customnginx-3557040084-1z489   1/1       Terminating   0          16m
-customnginx-3557040084-3hhlt   1/1       Terminating   0          16m
-customnginx-3557040084-bvtnh   1/1       Running       0          15s
-customnginx-3557040084-c6skw   1/1       Terminating   0          16m
-customnginx-3557040084-fw1t3   1/1       Running       0          16m
-customnginx-3557040084-xqk1n   1/1       Running       0          15s
-```
-
-This proves, Kubernetes provides us High Availability, using multiple replicas of a pod.
-
-## Clean up
-
-Delete deployments and services as follows:
-
-```shell
-$ kubectl delete deployment customnginx
-$ kubectl delete deployment multitool
-$ kubectl delete service customnginx
-```
-
 
 ## De faire des mises à jours de déploiements
 Recreate the nginx deployment that we did earlier:
