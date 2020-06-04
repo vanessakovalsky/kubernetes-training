@@ -17,14 +17,14 @@ deployment.extensions/nginx scaled
 * Vérifier le résultat sur les déploiements et les pods :
 
 ```shell
-$ kubectl get deployments
+kubectl get deployments
 NAME        READY   UP-TO-DATE   AVAILABLE   AGE
 multitool   1/1     1            1           24m
 nginx       4/4     4            4           34m
 ```
 
 ```shell
-$ kubectl get pods
+kubectl get pods
 NAME                         READY     STATUS    RESTARTS   AGE
 multitool-3148954972-k8q06   1/1       Running   0          24m
 nginx-569477d6d8-4msf8       1/1       Running   0          20m
@@ -43,7 +43,7 @@ deployment.extensions/nginx scaled
 ```
 * On vérifie le résultat :
 ```shell
-$ kubectl get pods
+kubectl get pods
 NAME                         READY     STATUS        RESTARTS   AGE
 multitool-3148954972-k8q06   1/1       Running       0          25m
 nginx-569477d6d8-4msf8       1/1       Running       0          21m
@@ -54,7 +54,7 @@ nginx-569477d6d8-v8srx       1/1       Running       0          2m
 * Les pods nont utilisé sont tués immédiatement :
 
 ```shell
-$ kubectl get pods
+kubectl get pods
 NAME                         READY     STATUS    RESTARTS   AGE
 multitool-3148954972-k8q06   1/1       Running   0          26m
 nginx-569477d6d8-4msf8       1/1       Running   0          22m
@@ -62,11 +62,6 @@ nginx-569477d6d8-v8srx       1/1       Running   0          2m
 ```
 
 ## De faire des mises à jours de déploiements
-Recreate the nginx deployment that we did earlier:
-
-```shell
-$ kubectl create deployment nginx --image=nginx:1.7.9
-```
 
 And expose the pod using a load balancer service (remember that it might take a
 few minutes for the cloud infrastructure to deploy the load balancer, i.e. the
