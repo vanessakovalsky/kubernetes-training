@@ -7,16 +7,14 @@ Cet exercice a pour objectfs :
 * D'ajouter des vérifications de l'état de vos containers (healthchecks)
 
 ## De vous permettre de mettre à l'échelle vos pod dans votre cluster
-So far we have seen pods, deployments and services. We have also seen Kubernetes keeping up it's promise of resilience. Now we see how we can have **high availability** on Kubernetes. The easiest and preferred way to do this is by having multiple replicas for a deployment.
+Nous allons travailler sur la scalabilité de notre pod, afin de permettre d'augmenter le nombre de replicas disponibles.$
 
-Let's increase the number of replicas of our nginx deployment to four(4):
-
+* Commencer par augmenter le nombre de replicas disponible à 4 pour notre déploiement nginx :
 ```shell
-$ kubectl scale deployment nginx --replicas=4
+kubectl scale deployment nginx --replicas=4
 deployment.extensions/nginx scaled
 ```
-
-Check the deployment and pods:
+* Vérifier le nombre de pods sur le déploiement :
 
 ```shell
 $ kubectl get deployments
