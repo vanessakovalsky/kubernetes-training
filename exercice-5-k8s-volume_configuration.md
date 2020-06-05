@@ -53,7 +53,7 @@ pvc-e8a4fc89-2bae-11e8-b065-42010a8400e3   5Gi        RWO            Delete     
 * Maintenant nous allons créer et attacher un PV et un PVC à notre déploiement nginx
 * Créer un fichier/nginx-persistent-storage.yaml contenant:
 ```
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
