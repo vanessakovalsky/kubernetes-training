@@ -92,15 +92,9 @@ kubectl create -f nginx-persistent-storage.yaml
 ```shell
 kubectl describe pod nginx
 ```
-Now, you access the Nginx instance using curl. You should get a "403 Forbidden", because now the volume you mounted is empty.
-
-> Hint. You learned about exposing deployments on a NodePort in the [service
-> discovery](02-service-discovery-and-loadbalancing.md) exercise.
-> 
-> Hint 2. You can curl the nodeport from any device you have access to from the internet; Your machine, your cloud instance, or the multitool container in the cluster. You learned about the multitool and running command inside a container pod in the [service discovery](02-service-discovery-and-loadbalancing.md) exercise.
-
+* Si vous acceceder avec curl (en exposant un service comme vu précédemment) au conteneur, vous obtenez une erreur 403, c'est normal le volume monté est vide :
 ```shell
-$ kubectl exec -it multitool-<ID> bash
+kubectl exec -it multitool-<ID> bash
 bash-4.4# curl 10.0.96.7
 <html>
 <head><title>403 Forbidden</title></head>
@@ -111,67 +105,27 @@ bash-4.4# curl 10.0.96.7
 </html>
 bash-4.4# 
 ```
-
-Exit the multitool pod again if you are using that.
-
-Create a file in the `html` dir inside the nginx pod and add some text in it:
-
+* Sortez du pod avec exit
+* Créer un fichier HTML dans le répertoire utilisé par le pod nginx et ajouté du contenu :
 ```shell
-$ kubectl exec -it nginx-deployment-6665c87fd8-cc8k9 -- bash
-
+kubectl exec -it nginx-deployment-6665c87fd8-cc8k9 -- bash
 root@nginx-deployment-6665c87fd8-cc8k9:/# echo "<h1>Welcome to Nginx</h1>This is Nginx with html directory mounted as a volume from GCE Storage."  > /usr/share/nginx/html/index.html
 root@nginx-deployment-6665c87fd8-cc8k9:/#
 ```
-
-Exit the nginx pod again. From the multitool container, run curl again, you should see the web page:
-
+* Sortir du pod avec exit. et lancer curl de nouveau pour voir votre page web :
 ```shell
-$ kubectl exec -it multitool-69d6b7fc59-gbghn bash
+kubectl exec -it multitool-69d6b7fc59-gbghn bash
 
 bash-4.4#
  curl 10.0.96.7
 <h1>Welcome to Nginx</h1>This is Nginx with html directory mounted as a volume from GCE Storage.
 bash-4.4#
 ```
-
-Kill the pod:
-
-```shell
-$ kubectl delete pod nginx-deployment-6665c87fd8-cc8k9
-pod "nginx-deployment-6665c87fd8-cc8k9" deleted
-```
-
-Check if it is up (notice a new pod):
-
-```shell
-$ kubectl get pods -o wide
-NAME                                READY     STATUS    RESTARTS   AGE       IP          NODE
-multitool-69d6b7fc59-gbghn          1/1       Running   0          10m       10.0.97.8   gke-dcn-cluster-2-default-pool-4955357e-txm7
-nginx-deployment-6665c87fd8-nh7bs   1/1       Running   0          1m        10.0.96.8   gke-dcn-cluster-2-default-pool-4955357e-8rnp
-```
-
-Again, from multitool, curl the new nginx pod. You should see the page you created in the previous step:
-
-```shell
-$ kubectl exec -it multitool-69d6b7fc59-gbghn bash
-bash-4.4# curl 10.0.96.8
-<h1>Welcome to Nginx</h1>This is Nginx with html directory mounted as a volume from GCE Storage.
-bash-4.4# 
-```
+* Vous savez maintenant créer, monter et utiliser un volume et une requête sur ce volume. 
 
 ## Ajout et utilisations de configmaps et de secrets dans un pod :
 
-# Secrets and ConfigMaps
-
-Secrets are a way to store things that you do not want floating around in your code.
-
-It's things like passwords for databases, API keys and certificates.
-
-Similarly, configmaps are for configuration, that doesn't really belong in code but needs to change. Examples include loadbalancer configurations, jenkins configuration and so forth.
-
-We will look at both these in this coming exercise.
-
-## Secrets as environment variables
+###  Secrets comme variables d'environnement 
 
 Our [magnificent app](./secrets/secretapp.js) requires its API key and language. Rather than hardcode this sensitive information and commit it to git for all the world to see, we source these values from environment variables.
 
