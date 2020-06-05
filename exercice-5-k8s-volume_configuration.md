@@ -5,45 +5,53 @@ Cet exercice a pour objectifs :
 * de définir et d'utiliser des configsmaps et des secrets 
 
 ## Ajout et utilisation de volume dans un pod :
-
-# Kubernetes storage (PV and PVC):
-
-List the available storage classes:
-
-```shell
-kubectl get storageclass
+* Créer un fichier pvc-nginx.yml avec le contenu suivant :
 ```
-
-Create a claim for a dynamically provisioned volume (PVC) for nginx. 
-
-```shell
-$ kubectl create -f support-files/pvc-nginx.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nginx
+  labels:
+    name: pvc-nginx
+    app: efk
+spec:
+  # If you are using dynamic provisioning, it is important to specify a storageClassName.
+  storageClassName: "standard"
+  #selector:
+   # matchLabels:
+    #  name: pv-nginx
+  accessModes:
+    # Though accessmode is already defined in pv definition. It is still needed here.
+    # - ReadWriteMany
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
 ```
-
-Check that the PVC exists and is bound:
+* Créer une requete pour un volume provisionné dynamiquemenet pour nginx à partir du fichier  :
 
 ```shell
-$ kubectl get pvc
+$ kubectl create -f pvc-nginx.yaml
 ```
-
-Example:
-
+* Vérifier que le PVC existe et est fonctionnel :
 ```shell
-$ kubectl get pvc
+kubectl get pvc
+```
+* Exemple:
+```shell
+kubectl get pvc
 NAME        STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 pvc-nginx   Bound     pvc-e8a4fc89-2bae-11e8-b065-42010a8400e3   5Gi        RWO            standard       4m
 ```
-
-There should be a corresponding auto-created persistent volume (PV) against this PVC:
+* Il devrait y avoir un volume persistent auto-crée avec la PVC
 
 ```shell
-$ kubectl get pv
+kubectl get pv
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM               STORAGECLASS   REASON    AGE
 pvc-e8a4fc89-2bae-11e8-b065-42010a8400e3   5Gi        RWO            Delete           Bound     default/pvc-nginx   standard                 5m
 ```
-
-We are going to use the file `support-files/nginx-persistent-storage.yaml` file to use storage/volume directives:
-
+* Maintenant nous allons créer et attacher un PV et un PVC à notre déploiement nginx
+* Créer un fichier/nginx-persistent-storage.yaml contenant:
 ```
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -75,15 +83,15 @@ spec:
         - mountPath: "/usr/share/nginx/html"
           name: nginx-htmldir-volume
 ```
-
-Deploy nginx again. 
+* Redéployer nginx
 
 ```shell
-$ kubectl create -f support-files/nginx-persistent-storage.yaml
+kubectl create -f nginx-persistent-storage.yaml
 ```
-
-After it starts, you may want to examine it by using `kubectl describe pod nginx` and look out for volume declarations.
-
+* Après le démarrage, vous pouvez vérifier ce qui a été déployer avec : 
+```shell
+kubectl describe pod nginx
+```
 Now, you access the Nginx instance using curl. You should get a "403 Forbidden", because now the volume you mounted is empty.
 
 > Hint. You learned about exposing deployments on a NodePort in the [service
@@ -149,15 +157,6 @@ $ kubectl exec -it multitool-69d6b7fc59-gbghn bash
 bash-4.4# curl 10.0.96.8
 <h1>Welcome to Nginx</h1>This is Nginx with html directory mounted as a volume from GCE Storage.
 bash-4.4# 
-```
-
-## Clean up
-
-```shell
-$ kubectl delete deployment multitool
-$ kubectl delete deployment nginx-deployment
-$ kubectl delete service nginx-deployment
-$ kubectl delete pvc pvc-nginx
 ```
 
 ## Ajout et utilisations de configmaps et de secrets dans un pod :
