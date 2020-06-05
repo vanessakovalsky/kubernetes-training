@@ -124,22 +124,21 @@ bash-4.4#
 * Vous savez maintenant créer, monter et utiliser un volume et une requête sur ce volume. 
 
 ## Ajout et utilisations de configmaps et de secrets dans un pod :
+Nous allons a présents travailler avec une application JS qui a besoin d'une clé d'API et d'une langue.
+Plutôt que de coder en dur ces informations sensibles, nous allons utiliser les secrets et configmaps mis à disposition par kubernetes.
+
+L'application est ici : [magnificent app](./secrets/secretapp.js)
 
 ###  Secrets comme variables d'environnement 
 
-Our [magnificent app](./secrets/secretapp.js) requires its API key and language. Rather than hardcode this sensitive information and commit it to git for all the world to see, we source these values from environment variables.
-
-The first step to fixing it, would be to make our variables as environmental variables.
-
-We have sourced the values in the code like this:
+*La première étape est d'utiliser les variables d'environnement en tant que variable.
+Dans le code source cela est représenté par :
 
 ```shell
   const language = process.env.LANGUAGE;
   const API_KEY = process.env.API_KEY;
 ```
-
-Because we are reading from the env variables we can specify some default in the Dockerfile.  We have used this:
-
+* Pour lire les variables d'environnement il faut les définir dans le container via son image. C'est ce que l'on fait avec le Dockerfil suivant (à créer du coup)
 ```shell
 FROM node:9.1.0-alpine
 EXPOSE 3000
@@ -148,23 +147,40 @@ ENV API_KEY 123-456-789
 COPY secretapp.js .
 ENTRYPOINT node secretapp.js
 ```
-
-This image is available as `praqma/secrets-demo`. We can run that in our Kubernetes cluster by using the [the deployment file](./secrets/deployment.yml). Notice the env values added in the bottom.
-
-Run the deployment by writing:
-
+* Puis nous créons un fichier de déploiement deployment.yml avec le contenu 
 ```shell
-$ kubectl apply -f secrets/deployment.yml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: envtest
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: envtest
+    spec:
+      containers:
+      - name: envtest
+        image: praqma/secrets-demo
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: LANGUAGE
+          value: Polish
+        - name: API_KEY
+          value: 333-444-555
+```
+* Lancer le déploiement avec la commande :
+```shell
+kubectl apply -f deployment.yml
 deployment.extensions/envtest created
 ```
-
+* Exposer le déploiement avec node port pour vérifier que l'application se lance et utiliser curl sur l'adresse ip du cluster avec le port donnée par node port pour accéder au port 3000 de votre container
 Expose the deployment on a nodeport, so you can see the running container.
 
-> You learned about exposing nodeports in the [service discovery](02-service-discovery-and-loadbalancing.md) exercise. And remember that the application is running on port `3000`
-
-Despite the default value in the Dockerfile, it should now be overwritten by the deployment env values!
-
-However we just moved it from being hardcoded in our app to being hardcoded in our deployment file.
+**NB** Les valeurs par défaut présentes dans le dockerfile sont maintenant surchargé avec celles contenus dans le déploiement, cela permet de définir des valeurs différentes pour les différents environnements par exemple.
 
 ## Secrets using the kubernetes secret resource
 
