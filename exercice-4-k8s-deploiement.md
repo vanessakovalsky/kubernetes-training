@@ -51,7 +51,7 @@ nginx-569477d6d8-bv77k       0/1       Terminating   0          1m
 nginx-569477d6d8-s6lsn       0/1       Terminating   0          1m
 nginx-569477d6d8-v8srx       1/1       Running       0          2m
 ```
-* Les pods nont utilisé sont tués immédiatement :
+* Les pods non utilisé sont tués immédiatement :
 
 ```shell
 kubectl get pods
@@ -61,134 +61,106 @@ nginx-569477d6d8-4msf8       1/1       Running   0          22m
 nginx-569477d6d8-v8srx       1/1       Running   0          2m
 ```
 
-## De faire des mises à jours de déploiements
-
-And expose the pod using a load balancer service (remember that it might take a
-few minutes for the cloud infrastructure to deploy the load balancer, i.e. the
-external IP might be shown as `pending`):
-
+## Faire des mises à jours de déploiements
+* Vériier que le service de load balancing tourne toujours :
 ```shell
-$ kubectl expose deployment nginx --port 80 --type LoadBalancer
+kubectl get service
+```
+* Remettre 4 replicas que nous allons utiliser pour le déploiement
+```shell
+kubectl scale deployment nginx --replicas=4
 ```
 
-Note down the loadbalancer IP from the services command:
+### Mise à jour du déploiement
+
+* Mettre à jour l'image utilisé pour le déploiement 
+
+```shell kubectl set image deployment nginx nginx=nginx:1.9.1 --record
+```
+* Vérifer le statut du rollout
+```shell
+kubectl rollout status deployment nginx
+```
+* Voir l'historique des mises à jour faite par rollout :
 
 ```shell
-$ kubectl get service
+kubectl rollout history deployment nginx
 ```
-
-Increase the replicas to four:
-
-```shell
-$ kubectl scale deployment nginx --replicas=4
-```
-
-From another terminal on your machine check (using load balancer IP) which version is currently running and to see changes when rollout is happening:
-
-```shell
-$ while true; do  curl -sI 35.205.60.29  | grep Server; sleep 2; done
-```
-
-### Update Deployment
-
-Rollout an update to the image:
-
-```shell
-$ kubectl set image deployment nginx nginx=nginx:1.9.1 --record
-```
-
-Check the rollout status:
-
-```shell
-$ kubectl rollout status deployment nginx
-```
-
-Investigate rollout history:
-
-```shell
-$ kubectl rollout history deployment nginx
-```
-
-Try rolling out other image version by repeating the `set image` command from
-above.  Suggested image versions are 1.12.2, 1.13.12, 1.14.1, 1.15.2.
-
-Try also rolling out a version that does not exist:
-
-```shell
-$ kubectl set image deployment nginx nginx=nginx:100.200.300 --record
-```
-
-what happened - do the curl operation still work?  Investigate the running pods with:
-
+* Essayer de répeter la mise à jour de l'image avec la commande set image. Quelques suggestions de versions d'images utilisables :
+ 1.12.2, 1.13.12, 1.14.1, 1.15.2.
+* Vérifier ce qu'il se passe avec :
 ```shell
 $ kubectl get pods
 ```
 
-### Undo Update
-
-The rollout above using a non-existing image version caused some pods to be
-non-functioning. Next, we will undo this faulty deployment. First, investigate
-rollout history:
-
+### Annuler une mise à jour 
+* Faire une mise à jour avec une image qui n'existe pas :
 ```shell
-$ kubectl rollout history deployment nginx
+kubectl set image deployment nginx nginx=nginx:100.200.300 --record
 ```
-
-Undo the rollout and restore the previous version:
-
+* Cela entraine le non fonctionnement de certaint pods
+* On peut vérifier ce qu'il s'est passé avec :
 ```shell
-$ kubectl rollout undo deployment nginx
+kubectl rollout history deployment nginx
 ```
-
-Investigate the running pods:
-
+* Pour annuler (défaire) le déploiement et restaurer la version précédente :
+```shell
+kubectl rollout undo deployment nginx
+```
+* Vérifier les pods en cours d'execution :
 ```shell
 $ kubectl get pods
 ```
 
 
 ## D'ajouter des vérifications de l'état de vos containers (healthchecks)
-Working with Kubernetes, you eventually need to understand the "magic". 
-
-When a container runs in a pod, Kubernetes reports back four things: 
+* Lorsqu'un conteneur tourne dans un pod, Kubernetes vous donne 4 informations :
 ```
 NAME                                       READY     STATUS    RESTARTS   AGE
 mypod-somenumbers-guid                     1/1       Running   0          3h
 ```
+* Intéressons nous à la partie Ready, qui est la vérification interne de fonctionnement que Kubernetes fait sur un conteneur.
+* Lorsqu'un conteneur n'est pas en état Kubernetes n'envoit pas de trafic sur celui-ci.
+* Parfois, certains conteneurs semble fonctionner alors qu'ils ont des problèmes. C'est pourquoi il est important de personnaliser les véfifications effectuées. 
+* Par exemple dans le déploiement suivant, le pod va fonctionner correctement pendant 30 secondes, puis ne plus fonctionner. La vérification personnalisé permet alors de savoir qu'il ne fonctionne plus.
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    test: liveness
+  name: liveness-exec
+spec:
+  containers:
+  - name: liveness
+    image: gcr.io/google_containers/busybox
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+```
+* La magie de Kubernetes consiste a recréé alors le conteneur qui ne fonctionne plus comme prévu. 
 
-This workshop assignment looks at the ready part, which is the internal health check Kubernetes performs on a container. 
-
-The difference between a container being healthy or unhealthy, is vital. A container can be creating, failing or otherwise deployed but unavailable - and in this state Kubernetes will choose not to route traffic to the container if it deems it unhealthy. 
-
-However, in some cases an app looks "healthy" despite having issues. This is where customized health checks become important. 
-
-Examples include the database running but being unreachable, the app functioning but a volume to store files in being unavailable and so on. 
-
-[This deployment](health-checks/deployment.yml) shows this quite nicely. 
-
-For the first 30 seconds of the pod's lifespan, it will be healthy. After this, the custom health check will fail. 
-
-The magic in Kubernetes, is that it will recreate an unhealthy container. 
-
-First, apply the deployment file with the `kubectl apply -f` command. Remember to specify the path.
-
-Look at the logs: 
+* Déployer ce déploiement avec  :kubectl apply -f <fichier-deploiement-a-enregistrer.yml>
+* Vérifier les logs pour connaitre les critères de vérifications sur les autres pods :
 ```
 kubectl describe pod liveness-exec
 ```  
-
-Any (http) code greater than or equal to 200 and less than 400 indicates success. Any other code indicates failure.
-
-Let's go back to our applications, and create a custom health check. 
-
-Create an endpoint that does something customized, and returns 200. (Make sure it can fail and return an error above 500 if you want to test). 
-
-Push the container, and create a deployment for it and include: 
-
+* Tous les code HTTP égal à 200 ou inférieur à 400 indique un succès. Tout autre code indique un échec.
+* Connectez vous au conteneur et créer un fichier healthz.html dans /usr/share/nginx/ 
+* Créer une nouvelle image du conteneur (avec docker) et pusher la sur le hub
+* Créer un déploiement avec votre nouvelle image ajouter ces indicateurs en plus du reste pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
       httpGet:
-        path: /healthz #Your endpoint for health check.
+        path: /healthz.html #Your endpoint for health check.
         port: 8080
         httpHeaders:
         - name: X-Custom-Header
@@ -196,7 +168,4 @@ Push the container, and create a deployment for it and include:
       initialDelaySeconds: 3
       periodSeconds: 3
 ```
-
-Verify that the healthcheck fails when conditions are not met. 
-
-This concludes the exercise for health checks!
+* Vérifier que le healtch continue à fonctionner;. (vous pouvez pas exemple renommer le fichier pour vérifier sur le conteneur lorsqu'il est en cours d'execution 
