@@ -75,7 +75,8 @@ kubectl scale deployment nginx --replicas=4
 
 * Mettre à jour l'image utilisé pour le déploiement 
 
-```shell kubectl set image deployment nginx nginx=nginx:1.9.1 --record
+```shell 
+kubectl set image deployment nginx nginx=nginx:1.9.1 --record
 ```
 * Vérifer le statut du rollout
 ```shell
