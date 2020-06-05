@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envtest
+spec:
+  selector:
+    matchLabels:        # labels the replica selector should match
+      name: envtest
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: envtest
+    spec:
+      containers:
+      - name: envtest
+        image: vanessakovalsky/mysecretapp
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: LANGUAGE
+          value: Polish
+        - name: API_KEY
