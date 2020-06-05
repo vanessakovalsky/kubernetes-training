@@ -183,25 +183,22 @@ Expose the deployment on a nodeport, so you can see the running container.
 **NB** Les valeurs par défaut présentes dans le dockerfile sont maintenant surchargé avec celles contenus dans le déploiement, cela permet de définir des valeurs différentes pour les différents environnements par exemple.
 
 ## Secrets using the kubernetes secret resource
-
-Let's move the API key to a (generic) secret:
-
+L'étape précédente nous a permis de rendre variables certaines informations, cependant définir une clé d'API en clair dans un fichier, n'est pas toujours sécurisé. Utilions maintenant l'objet secret de Kubernetes pour passer ces informations de manières sécurisées à nos déploiement
+* Générer un secret pour notre clé d'API :
 ```shell
-$ kubectl create secret generic apikey --from-literal=API_KEY=oneringtorulethemall
+kubectl create secret generic apikey --from-literal=API_KEY=oneringtorulethemall
 secret/apikey created
 ```
-
-Kubernetes supports different kinds of preconfigured secrets, but for now we'll deal with a generic one.
-
-Similarly for the language into a configmap:
-
+* Kubernetes supports différents type de secrets préconfigurés, nous utilions ici le type générique. Pour obtenir la liste des types de secrets disponibles, vous pouvez utiliser :
+```shell
+kubectl create secret --help
+```
+* Pour le langage, nous créons cette fois-ci un configmap :
 ```shell
 $ kubectl create configmap language --from-literal=LANGUAGE=Orcish
 configmap/language created
 ```
-
-Similarly to all other objects, you can run "get" on them.
-
+* Pour obtenir la liste des secrets, on peut utiliser get sur l'objet secret :
 ```shell
 $ kubectl get secrets
 NAME                  TYPE                                  DATA      AGE
@@ -214,19 +211,13 @@ $ kubectl get configmaps
 NAME       DATA      AGE
 language   1         2m
 ```
-
-> Try to investigate the secret by using the kubectl describe command:
+* Vous pouvez essayer d'afficher le secret avec describe :
 > ```shell
 > $ kubectl describe secret apikey
 > ```
-> Note that the actual value of API_KEY is not shown. To see the encoded value use:
-> ```shell
-> $ kubectl get secret apikey -o yaml
-> ```
-
-Last step is to change the Kubernetes deployment file to use the secrets.
-
-Change:
+* **NB** La valeur du secret n'est pas montré en clair, on voit la valeur chiffré.
+* Dernière étape, modifier le fichier de déploiement pour utiliser les secrets creer:
+Remplacer:
 
 ```shell
         env:
@@ -235,9 +226,7 @@ Change:
         - name: API_KEY
           value: 333-444-555
 ```
-
-To:
-
+Par : 
 ```shell
         env:
         - name: LANGUAGE
@@ -251,37 +240,23 @@ To:
               name: apikey
               key: API_KEY
 ```
-
-After you have edited the `deployment.yml` file (or you can use the prepared one
-`secrets/final.deployment.yml`), you need to apply the new edition of the file
-by issuing: `kubectl apply -f deployment.yml` .
-
-You should now see the variables being loaded from configmap and secret respectively.
-
-Pods are not recreated automatically when secrets or configmaps change, i.e. to
-hot swapping the values becomes a two step process:
-
+* Relancer le déploiement avec
+```
+kubectl apply -f deployment.yml` .
+```
+* Les variables sont maintenant chargées depuis configmap et secret
+* Les pods ne sont pas recréés automatiquement lors des modification des secrets ou des configmaps.
+* Il est nécessaire de les remplacer en deux étapes :
 ```shell
-$ kubectl create configmap language --from-literal=LANGUAGE=Elvish -o yaml --dry-run | kubectl replace -f -
+kubectl create configmap language --from-literal=LANGUAGE=Elvish -o yaml --dry-run | kubectl replace -f -
 configmap/language replaced
-$ kubectl create secret generic apikey --from-literal=API_KEY=andinthedarknessbindthem -o yaml --dry-run | kubectl replace -f -
+kubectl create secret generic apikey --from-literal=API_KEY=andinthedarknessbindthem -o yaml --dry-run | kubectl replace -f -
 secret/apikey replaced
 ```
-
-Then delete the pod (so it's recreated with the replaced configmap and secret) :
-
+**NB** L'option --dry-run permet de simuler l'execution sans la lancer réellement.
+* Puis il faut supprimer le pod, pour que K8S le recrée avec les bons configmaps et secrets :
 ```shell
-$ kubectl delete pod envtest-3380598928-kgj9d
+kubectl delete pod envtest-3380598928-kgj9d
 pod "envtest-3380598928-kgj9d" deleted
 ```
-
-Access it in a webbrowser again, to see the updated values.
-
-## Clean up
-
-```shell
-$ kubectl delete deployment envtest
-$ kubectl delete service envtest
-$ kubectl delete configmap language
-$ kubectl delete secret apikey
-```
+* Accéder à l'application via Curl pour voir les valeurs mises à jour
