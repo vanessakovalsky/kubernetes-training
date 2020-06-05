@@ -9,7 +9,7 @@ Cet exercice a pour objectif de :
 * Créer un fichier manifest.yaml qui va contenir les différentes ressources à ajouter dans notre cluster 
 * Ce fichier contient un premier deploiement qui contient le cluster nginx :
 ```
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
@@ -34,7 +34,11 @@ spec:
  ```
  * Ajouter au sein du même fichier le deuxième déploiement des exercices précédents (pour rappel, les objets doivent être séparés avec --- )
  * Ajouter au sein du même fichier le service de type loadbalancer pour créer le service (la syntaxe est dans le support de cours, ou sur la doc de K8S : https://kubernetes.io/fr/docs/concepts/services-networking/service/#loadbalancer )
- 
+ * Vous pouvez générer le fichier à partir de la commande impérative avec :
+ ```
+ kubectl expose deployment nginx --port 80 --type NodePort --dry-run -o yaml > service-nodeport.yaml
+```
+
  ## Execution de notre fichier de déploiement
  * Pour lancer le fichier
  ```
