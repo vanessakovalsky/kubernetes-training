@@ -71,7 +71,7 @@ po/multitool-3148954972-k8q06   1/1       Running   0          25m
 ```
 * Pour voir les logs d'un pod :
 ```
-kubectl logs pod po/multitool-3148954972-k8q06
+kubectl logs po/multitool-3148954972-k8q06
 ```
 * Supprimer un pod :
 ```
