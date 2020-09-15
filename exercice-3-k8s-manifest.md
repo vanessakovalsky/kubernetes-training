@@ -1,8 +1,8 @@
 # Création du premier manifest
 
 Cet exercice a pour objectif de :
-* Rédiger un manifest.yaml qui contiendra les deux deéploiements précédents et le service
-* Lancer la creations des ressources à partir de ce manifeste
+* Rédiger un manifest.yaml qui contiendra les deux déploiements précédents et le service
+* Lancer la creations des ressources à partir de ce manifest
 
 ## Création du manifest.yaml
 
@@ -56,4 +56,4 @@ spec:
  ```
  kubectl get svc
  ```
- * -> Vous savez maintenant déployer plusieurs ressources à partirs d'un seul fichier déclaratifs 
+ * -> Vous savez maintenant déployer plusieurs ressources à partirs d'un seul fichier déclaratif
