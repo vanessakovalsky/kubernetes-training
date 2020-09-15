@@ -157,7 +157,7 @@ kubectl describe pod liveness-exec
 * Tous les code HTTP égal à 200 ou inférieur à 400 indique un succès. Tout autre code indique un échec.
 * Connectez vous au conteneur et créer un fichier healthz.html dans /usr/share/nginx/ 
 * Créer une nouvelle image du conteneur (avec docker) et pusher la sur le hub
-* * Créer un fichier healthz.html qui contient
+** Créer un fichier healthz.html qui contient
 ```
 <html>
 <body>
@@ -168,13 +168,13 @@ Ma page de vérification que mon conteneur et mon pod fonctionne
 ** Créer un fichier Dockerfile qui contient 
 ```
 FROM nginx
-COPY static-html-directory /usr/share/nginx/html
+COPY healthz.html /usr/share/nginx/html
 ```
-* * Builder l'image : 
+** Builder l'image : 
 ```
 docker build -t myhealthcheck . 
 ```
-* * Ajouter un tag à votre image et commiter là, et envoyer la sur le serveur :
+** Ajouter un tag à votre image et commiter là, et envoyer la sur le serveur :
 ```
 docker run -d --name mycheck myhealthcheck
 docker commit mycheck vanessakovalsky/my-healtcheck:v1
