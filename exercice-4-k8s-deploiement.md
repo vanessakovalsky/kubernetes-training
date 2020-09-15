@@ -188,6 +188,7 @@ docker commit mycheck vanessakovalsky/my-healtcheck:v1
 docker push vanessakovalsky/my-healtcheck:v1
 ```
 </details>
+
 * Créer un déploiement avec votre nouvelle image ajouter ces indicateurs en plus du reste pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
