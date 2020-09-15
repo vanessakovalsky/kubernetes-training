@@ -156,30 +156,34 @@ kubectl describe pod liveness-exec
 ```  
 * Tous les code HTTP égal à 200 ou inférieur à 400 indique un succès. Tout autre code indique un échec.
 * Connectez vous au conteneur et créer un fichier healthz.html dans /usr/share/nginx/ 
-* Créer une nouvelle image du conteneur (avec docker) et pusher la sur le hub
-  * Créer un fichier healthz.html qui contient
-```
-<html>
-<body>
-Ma page de vérification que mon conteneur et mon pod fonctionne
-</body>
-</html>
-```
-  * Créer un fichier Dockerfile qui contient 
-```
-FROM nginx
-COPY healthz.html /usr/share/nginx/html
-```
-  * Builder l'image : 
-```
-docker build -t myhealthcheck . 
-```
-  * Ajouter un tag à votre image et commiter là, et envoyer la sur le serveur :
-```
-docker run -d --name mycheck myhealthcheck
-docker commit mycheck vanessakovalsky/my-healtcheck:v1
-docker push vanessakovalsky/my-healtcheck:v1
-```
+
+=> La partie qui suit (dans le spoiler) est facultative, il s'agit de builder une image docker à utiliser dans K8s 
+
+
+!> Créer une nouvelle image du conteneur (avec docker) et pusher la sur le hub
+!>  * Créer un fichier healthz.html qui contient
+!>```
+!> <html>
+!> <body>
+!> Ma page de vérification que mon conteneur et mon pod fonctionne
+!> </body>
+!> </html>
+!> ```
+!>   * Créer un fichier Dockerfile qui contient 
+!> ```
+!> FROM nginx
+!> COPY healthz.html /usr/share/nginx/html
+!> ```
+!>   * Builder l'image : 
+!> ```
+!> docker build -t myhealthcheck . 
+!> ```
+!>   * Ajouter un tag à votre image et commiter là, et envoyer la sur le serveur :
+!> ```
+!> docker run -d --name mycheck myhealthcheck
+!> docker commit mycheck vanessakovalsky/my-healtcheck:v1
+!> docker push vanessakovalsky/my-healtcheck:v1
+!> ```
 * Créer un déploiement avec votre nouvelle image ajouter ces indicateurs en plus du reste pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
