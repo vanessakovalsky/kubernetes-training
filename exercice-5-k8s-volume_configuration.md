@@ -160,6 +160,9 @@ spec:
       labels:
         name: envtest
     spec:
+      selector:
+        matchLabels:        # labels the replica selector should match
+          name: envtest
       containers:
       - name: envtest
         image: praqma/secrets-demo
