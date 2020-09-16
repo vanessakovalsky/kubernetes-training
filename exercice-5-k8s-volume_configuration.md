@@ -155,25 +155,26 @@ metadata:
   name: envtest
 spec:
   replicas: 1
+  selector:
+    matchLabels:        # labels the replica selector should match
+      name: envtest
   template:
     metadata:
       labels:
         name: envtest
-    spec:
-      selector:
-        matchLabels:        # labels the replica selector should match
-          name: envtest
+    spec:       
       containers:
-      - name: envtest
-        image: praqma/secrets-demo
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3000
-        env:
-        - name: LANGUAGE
-          value: Polish
-        - name: API_KEY
-          value: 333-444-555
+        - name: envtest
+          image: praqma/secrets-demo
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: LANGUAGE
+              value: Polish
+            - name: API_KEY
+              value: 333-444-555
+
 ```
 * Lancer le déploiement avec la commande :
 ```shell
