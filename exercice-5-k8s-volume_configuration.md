@@ -149,7 +149,7 @@ ENTRYPOINT node secretapp.js
 ```
 * Puis nous créons un fichier de déploiement deployment.yml avec le contenu 
 ```shell
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: envtest
