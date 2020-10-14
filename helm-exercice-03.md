@@ -1,26 +1,22 @@
-# Lab 3. Keeping track of the deployed application
+# Exercice 3. Garder la trace de l'application déployée
 
-Let's say you deployed different release versions of your application (i.e., you upgraded the running application). How do you keep track of the versions and how can you do a rollback?
+Partons du principe que vous avez déployé plusieurs versions de votre application (c'est-à-dire que vous avez mis à jour l'application en cours d'éxecution). Comment garder une trace des versions et faire un retour arrière ?
 
-## Scenario 1: Revision management using Kubernetes
+## Gestion des révisions avec Helm
 
-In this part of the lab, we should illustrate revision management of `guestbook` by using Kubernetes directly, but we can't. This is because Kubernetes does not provide any support for revision management. The onus is on you to manage your systems and any updates or changes you make. However, we can use Helm to conduct revision management.
+Dans cet exercice, nous illustrons la gestion des révisions sur l'application déployée `guestbook-demo` en utilisant Helm.
 
-## Scenario 2: Revision management using Helm
+Avec Helm, à chaque installation, mise-)-jour ou retour arrière est fait, le numéro de révision est incrémenté de 1. Le premier numéro de révision est toujours 1. Helm enregistre les métadonnées des relases dans les Secrets ou les ConfigMaps, stocké sur le cluster Kubernetes. Chaque fois que votre release change, cela s'ajoute aux données existantes. Cela permet à Helm de revenir à une précédente release.
 
-In this part of the lab, we illustrate revision management on the deployed application `guestbook-demo` by using Helm.
+Voyons en pratique comment cela fonctionne.
 
-With Helm, every time an install, upgrade, or rollback happens, the revision number is incremented by 1. The first revision number is always 1. Helm persists release metadata in Secrets (default) or ConfigMaps, stored in the Kubernetes cluster. Every time your release changes, it appends that to the existing data. This provides Helm with the capability to rollback to a previous release.
-
-Let's see how this works in practice.
-
-1. Check the number of deployments:
+1. Vérifier le nombre de déploiements :
 
     ```console
     helm history guestbook-demo -n helm-demo
     ```
 
-    You should see output similar to the following because we did an upgrade in [Lab 2](../Lab2/README.md) after the initial install in [Lab 1](../Lab1/README.md):
+    Vous devriez avoir un retour similaire au suivant puisque dans l'exercice 2 nous avons faite une mise à jour, après l'installation initiale de l'exercice 1.
 
     ```console
     $ helm history guestbook-demo -n helm-demo
@@ -29,11 +25,11 @@ Let's see how this works in practice.
     2           Tue Feb 25 14:23:27 2020    deployed    guestbook-0.2.0             Upgrade complete
     ```
 
-1. Roll back to the previous revision:
+1. Revenir à une révision précédente :
 
-    In this rollback, Helm checks the changes that occured when upgrading from the revision 1 to revision 2. This information enables it to makes the calls to the Kubernetes API server, to update the deployed application as per the initial deployment - in other words with Redis slaves and using a load balancer.
+    Lors d'un retour en arrière, Helm vérifie les changements qui ont été fait lors de la mise à jour entre la révision 1 et la révision 2. Cette information permet de créer les appels au serveur d'API de Kubernetes, pour mettre à jour l'application déployée et revenir à l'état initial du déploiement - autrement dit, avec les esclaves Redis et l'utilisation du load balancer..
 
-    Rollback with this command:
+    Revenir en arrière avec la commande :
 
     ```console
     helm rollback guestbook-demo 1 -n helm-demo
@@ -44,13 +40,13 @@ Let's see how this works in practice.
     Rollback was a success! Happy Helming!
     ```
 
-    Check the history again:
+    Vérifier à nouveau l'historique :
 
     ```console
     helm history guestbook-demo -n helm-demo
     ```
 
-    You should see output similar to the following:
+    Vous devriez avoir un retour similaire au suivant:
 
     ```console
     $ helm history guestbook-demo -n helm-demo
@@ -60,7 +56,7 @@ Let's see how this works in practice.
     3           Tue Feb 25 14:53:45 2020    deployed    guestbook-0.2.0             Rollback to 1
     ```
 
-    Check the rollback, using:
+    Vérifier le retour en arrière, en utilisant :
 
     ```console
     kubectl get all --namespace helm-demo
@@ -91,11 +87,10 @@ Let's see how this works in practice.
     replicaset.apps/redis-slave-586b4c847c      2         2         2       5m15s
     ```
 
-    You can see from the output that the app service is the service type of `LoadBalancer` again and the Redis master/slave deployment has returned.
-    This shows a complete rollback from the upgrade in [Lab 2](../Lab2/README.md)
+    Vous pouvez maintenant voir sur la sortie, que le service de l'app est de type `LoadBalancer` de nouveau et que le déploiement des maitre/esclaves de Redis sont revenus.
+    Cela montre un complet retour en arrière suite à la mise  jour de l'exercice 2.
 
 ## Conclusion
 
-From this lab, we can say that Helm does revision management well and Kubernetes does not have the capability built in! You might be wondering why we need `helm rollback` when you could just re-run the `helm upgrade` from a previous version. And that's a good question. Technically, you should end up with the same resources (with same parameters) deployed. However, the advantage of using `helm rollback` is that helm manages (ie. remembers) all of the variations/parameters of the previous `helm install\upgrade` for you. Doing the rollback via a `helm upgrade` requires you (and your entire team) to manually track how the command was previously executed. That's not only tedious but very error prone. It is much easier, safer and reliable to let Helm manage all of that for you and all you need to do it tell it which previous version to go back to, and it does the rest.
+Avec cette exercice, nous pouvons dire que Helm gère bien les révisions, alors que Kubernetes ne le permet pas nativement! Vous devez vous demandez pourquoi avons nous besoin de faire `helm rollback` alors que nous pourrions relancer la commande  `helm upgrade` depuis une ancienne version. C'est une bonne question. Techniquement, vous obtiendrez les mêmes ressources (avec les mêmes paramètres) deployées. Cependant, l'avantage de l'utilisation de  `helm rollback` est que helm gère (au sens se souvient) toutes les variations / paramètres des précédents `helm install\upgrade` pour vous. Faire le retour arrière en utilisant `helm upgrade` nécessite que vous et votre équipe au complet de tracer manuellement comment les commandes ont été précédemment éxecutées. C'est non seulement pénible, mais surtout sujet à erreur. Il est plus facile, sécurisé et réutilisable de laisser Helm gérer cela pour vous et de lui dire seulement à quelle version antérieur revenir, et Helm s'occupe du reste.
 
-[Lab 4](../Lab4/README.md) awaits.
