@@ -78,44 +78,44 @@ git clone https://github.com/IBM/guestbook.git
 
     2. Aller à l'adresse récupérée en sortie dans votre navigateur (par exemple : `http://50.23.5.136:31838`) . Vous devriez voir le guestbook s'afficher dans votre navigateur
 
-       ![Guestbook](https://github.com/IBM/helm101/tree/master/tutorial/images/guestbook-page.png)
+       ![Guestbook](https://github.com/IBM/helm101/blob/master/tutorial/images/guestbook-page.png?raw=true)
 
 ## Scenario 2: Déployer l'application en utilisant Helm
 
-In this part of the lab, we will deploy the application by using Helm. We will set a release name of `guestbook-demo` to distinguish it from the previous deployment. The Helm chart is available [here](../../charts/guestbook). Clone the [Helm 101](https://github.com/IBM/helm101) repo to get the files:
+Dans cette partie de l'exercice, nous allons déployer l'applications en utilisant Helm. Nous définissons un nom de release à `guestbook-demo` pour le distinguer de ces précédents déploiements. Le graphique helm est disponible sur github. Cloner le dépôt[Helm 101](https://github.com/IBM/helm101) pour obtenir les fichiers :
 
 ```console
 git clone https://github.com/IBM/helm101
 ```
 
-A chart is defined as a collection of files that describe a related set of Kubernetes resources. We probably then should take a look at the the files before we go and install the chart. The files for the `guestbook` chart are as follows:
+Un graphique est défini comme une collection de fichiers qui décrivent un set de ressources liés de Kubernetes. Nous pouvons regarder les fichiers avant d'installer le graphique. Les fichier du graphique `guestbook` sont les suivants :
 
 ```text
 .
-├── Chart.yaml    \\ A YAML file containing information about the chart
-├── LICENSE       \\ A plain text file containing the license for the chart
-├── README.md     \\ A README providing information about the chart usage, configuration, installation etc.
-├── templates     \\ A directory of templates that will generate valid Kubernetes manifest files when combined with values.yaml
-│   ├── _helpers.tpl               \\ Template helpers/definitions that are re-used throughout the chart
-│   ├── guestbook-deployment.yaml  \\ Guestbook app container resource
-│   ├── guestbook-service.yaml     \\ Guestbook app service resource
-│   ├── NOTES.txt                  \\ A plain text file containing short usage notes about how to access the app post install
-│   ├── redis-master-deployment.yaml  \\ Redis master container resource
-│   ├── redis-master-service.yaml     \\ Redis master service resource
-│   ├── redis-slave-deployment.yaml   \\ Redis slave container resource
-│   └── redis-slave-service.yaml      \\ Redis slave service resource
-└── values.yaml   \\ The default configuration values for the chart
+├── Chart.yaml    \\ Un fichier YAML qui contient des informations à propos du graphique
+├── LICENSE       \\ Un fichier de text qui contient la licence pour le graphique
+├── README.md     \\ Un README qui fournit des informations sur l'utilisation du graphique, sa configuration, son installation, etc.
+├── templates     \\ Un dossier de templates qui génère des fichiers manifest Kubernetes valide lorsqu'ils sont combinés au fichier values.yaml
+│   ├── _helpers.tpl               \\ Template de définition / aide qui sont réutilisé par le graphique
+│   ├── guestbook-deployment.yaml  \\ Guestbook app container ressource
+│   ├── guestbook-service.yaml     \\ Guestbook app service ressource
+│   ├── NOTES.txt                  \\ Un fichier texte qui contient quelques notes d'utilisation sur comment accéder à l'application après l'installation
+│   ├── redis-master-deployment.yaml  \\ Redis master container ressource
+│   ├── redis-master-service.yaml     \\ Redis master service ressource
+│   ├── redis-slave-deployment.yaml   \\ Redis slave container ressource
+│   └── redis-slave-service.yaml      \\ Redis slave service ressource
+└── values.yaml   \\ Les valeurs de configuration par défaut pour le graphique
 ```
 
-Note: The template files shown above will be rendered into Kubernetes manifest files before being passed to the Kubernetes API server. Therefore, they map to the manifest files that we deployed when we used `kubectl` (minus the helper and notes files).
+Note : les fichiers de templates montré ci-dessus seront rendus dans des fichiers manifest Kubernetes avant d'être envoyé au serveur d'API de Kubernetes. Ils correspondent aux fichiers manifests que nous avons déployés avec `kubectl` (sans les fichiers helpers et de notes)
 
-Let's go ahead and install the chart now. If the `helm-demo` namespace does not exist, you will need to create it using:
+Commençons l'installation du graphique. Si l'espace de nom `helm-demo` n'existe pas, vous devez le créer avec :
 
 ```console
 kubectl create namespace helm-demo
 ```
 
-1. Install the app as a Helm chart:
+1. Installer l'appli avec le graphique Helm :
 
    ```console
    $ cd helm101/charts
@@ -125,7 +125,7 @@ kubectl create namespace helm-demo
    ...
    ```
 
-   You should see output similar to the following:
+   Vous devriez avoir une sortie similaire à la suivante :
 
    ```console
    NAME: guestbook-demo
@@ -142,15 +142,15 @@ kubectl create namespace helm-demo
      echo http://$SERVICE_IP:3000
    ```
 
-   The chart install performs the Kubernetes deployments and service creations of the redis master and slaves, and the guestbook app, as one. This is because the chart is a collection of files that describe a related set of Kubernetes resources and Helm manages the creation of these resources via the Kubernetes API.
+   L'installation du graphique lance les créations de déploiements et de services Kubernetes du maitre et des esclaves de Redis, et de l'application guestbook en une seule commande. Cela vient du fait que le graphique est une collection de fichiers qui décrivent des ressources Kubernetes liées et que Jelm gère la création de ces ressources via l'API de Kubernetes.
 
-   Check the deployment:
+   Vérifier le déploiement :
 
    ```console
    kubectl get deployment guestbook-demo --namespace helm-demo
    ```
 
-   You should see output similar to the following:
+   Vous devriez avoir une sortie similaire à la suivante :
 
    ```console
    $ kubectl get deployment guestbook-demo --namespace helm-dem
@@ -158,13 +158,13 @@ kubectl create namespace helm-demo
    guestbook-demo   2/2     2            2           51m
    ```
 
-   To check the status of the running application pods, use:
+   Pour vérifier le status des pods faisant tourner l'application, utilisez :
 
    ```console
    kubectl get pods --namespace helm-demo
    ```
 
-   You should see output similar to the following:
+   Vous devriez avoir une sortie similaire à la suivante :
 
    ```console
    $ kubectl get pods --namespace helm-demo
@@ -176,7 +176,7 @@ kubectl create namespace helm-demo
    redis-slave-586b4c847c-q7rq5    1/1       Running   0          52m
    ```
 
-   To check the services, use:
+   Pour vérifier les services, utiliser : 
 
    ```console
    kubectl get services --namespace helm-demo
@@ -190,16 +190,16 @@ kubectl create namespace helm-demo
    redis-slave      ClusterIP      172.21.176.148   <none>        6379/TCP         52m
    ```
 
-1. View the guestbook:
+1. Voir le guestbook:
 
-   You can now play with the guestbook that you just created by opening it in a browser (it might take a few moments for the guestbook to come up).
+   Vous pouvez maintenant jouer avec l'application guestbook en ouvrant un navigateur.
 
     * **Local Host:**
-    If you are running Kubernetes locally, view the guestbook by navigating to `http://localhost:3000` in your browser.
+    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : http://localhost:3000` dans votre navigateur
 
     * **Remote Host:**
 
-    1. To view the guestbook on a remote host, locate the external IP and the port of the load balancer by following the "NOTES" section in the install output. The commands will be similar to the following:
+    1. Pour voir le guestbook sur un hôte distant, localiser l'adresse IP externe et le port en suivant la section NOTES de la sortie de l'installation. Les commandes ressemblent aux commandes suivantes :
 
        ```console
        $ export SERVICE_IP=$(kubectl get svc --namespace helm-demo guestbook-demo -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
@@ -207,9 +207,9 @@ kubectl create namespace helm-demo
        http://50.23.5.136
        ```
 
-       Combine the service IP with the port of the service printed earlier. In this scenario the URL is `http://50.23.5.136:31367`.
+       Combiner l'IP du service avec le port du service affiché précédemment. Dans ce scénario l'URL est :`http://50.23.5.136:31367`.
 
-       Note: If no external IP is assigned, then you can get the external IP with the following command:
+       Note: Si aucune adresse IP externe n'est assigné, vous pouvez en obtenir une avec la commande suivante ::
 
        ```console
        $ kubectl get nodes -o wide
@@ -217,14 +217,13 @@ kubectl create namespace helm-demo
        10.47.122.98   Ready     <none>    1h        v1.10.11+IKS   173.193.92.112   Ubuntu 16.04.5 LTS   4.4.0-141-generic   docker://18.6.1
        ```
 
-       In this scenario the URL is `http://173.193.92.112:31367`.
+       Dans ce scénario l'URL est  `http://173.193.92.112:31367`.
 
-    2. Navigate to the output given (for example `http://50.23.5.136:31367`) in your browser. You should see the guestbook now displaying in your browser:
+    2. Aller à l'adresse récupérée en sortie dans votre navigateur (par exemple : `http://50.23.5.136:31838`) . Vous devriez voir le guestbook s'afficher dans votre navigateur
 
-       ![Guestbook](../images/guestbook-page.png)
+       ![Guestbook](https://github.com/IBM/helm101/blob/master/tutorial/images/guestbook-page.png?raw=true)
 
 ## Conclusion
 
-Congratulations, you have now deployed an application by using two different methods to Kubernetes! From this lab, you can see that using Helm required less commands and less to think about (by giving it the chart path and not the individual files) versus using `kubectl`. Helm's application management provides the user with this simplicity.
+Félicitations, vous avez déoloyoer une application en utilisant les deux méthodes différentes de Kubernetes. Avec cet exercice, vous voyez qu'utilisez Helm demande moins de commandes à penser (en lui donnant le chemin du graphique et pas des fichiers individuels) en comparaison avec l'utilisation de `kubectl`. La gestion des application de Helm simplifie la vie de l'utilisateur.
 
-Move on to the next lab, [Lab2](../Lab2/README.md), to learn how to update our running app when the chart has been changed.
