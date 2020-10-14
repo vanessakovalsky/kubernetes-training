@@ -1,10 +1,10 @@
-# Lab 4. I like sharing
+# Exercice 4. Partage des graphiques Helm
 
-A key aspect of providing an application means sharing with others. Sharing can be direct counsumption (by users or in CI/CD pipelines) or as a dependency for other charts. If people can't find your app then they can't use it.
+Un des aspects clés de la fourniture d'application signifie la partager avec d'autres. Le partage peut être une utilisation directe (par des utilisateurs ou des pipelines CI/CD) ou en tant que dépendances pour d'autre graphiques. Si les gens ne peuvent pas trouver l'application, ils ne peuvent pas l'utiliser.
 
-A means of sharing is a chart repository, which is a location where packaged charts can be stored and shared. As the chart repository only applies to Helm, we will just look at the usage and storage of Helm charts.
+Une façon de parager ces graphiques est un dépôt, qui est une localisation ou les graphiques packagés peuvent être stockés et partagés. 
 
-## Using charts from a public repository
+## Utiliser des graphiques depuis un dépôts public 
 
 Helm charts can be available on a remote repository or in a local environment/repository. The remote repositories can be public like [Bitnami Charts](https://github.com/bitnami/charts) or [IBM Helm Charts](https://github.com/IBM/charts), or hosted repositories like on Google Cloud Storage or GitHub. Refer to [Helm Chart Repository Guide](https://helm.sh/docs/topics/chart_repository/) for more details. You can learn more about the structure of a chart repository by examining the [chart index file](../../index.yaml) in this lab.
 
