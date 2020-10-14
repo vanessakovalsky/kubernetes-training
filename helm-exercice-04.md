@@ -6,39 +6,39 @@ Une façon de parager ces graphiques est un dépôt, qui est une localisation ou
 
 ## Utiliser des graphiques depuis un dépôts public 
 
-Helm charts can be available on a remote repository or in a local environment/repository. The remote repositories can be public like [Bitnami Charts](https://github.com/bitnami/charts) or [IBM Helm Charts](https://github.com/IBM/charts), or hosted repositories like on Google Cloud Storage or GitHub. Refer to [Helm Chart Repository Guide](https://helm.sh/docs/topics/chart_repository/) for more details. You can learn more about the structure of a chart repository by examining the [chart index file](../../index.yaml) in this lab.
+Les graphiques Helm peuvent être disponible sur un depôt distant ou dans un environnement / dépôt local. Les dépôts distants peuvent être public comme [Bitnami Charts](https://github.com/bitnami/charts) ou [IBM Helm Charts](https://github.com/IBM/charts), ou des dépôts hergés comme ceux de  Google Cloud Storage ou GitHub. Voir le [Helm Chart Repository Guide](https://helm.sh/docs/topics/chart_repository/) pour plus d'informations. Vous pouvez en apprendre plus sur la structure d'un dépôt de graphique en étudiant le [chart index file](../../index.yaml) de ce dépôt.
 
-In this part of the lab, we show you how to install the `guestbook` chart from the [Helm101 repo](https://ibm.github.io/helm101/).
+Dans cet exercice, nous verrons comment installer le graphique `guestbook` depuis [Helm101 repo](https://ibm.github.io/helm101/).
 
-1. Check the repositories configured on your system:
+1. Vérifier les depôts configurés sur votre système :
 
    ```console
    helm repo list
    ```
 
-   The output should be similar to the following:
+   Vous devriez avoir un retour similaire au suivant :
 
    ```console
    $ helm repo list
    Error: no repositories to show
    ```
 
-   > Note: Chart repositories are not installed by default with Helm v3. It is expected that you add the repositories for the charts you want to use. The [Helm Hub](https://hub.helm.sh) provides a centralized search for publicly available distributed charts. Using the hub you can identify the chart with its hosted repository and then add it to your local respoistory list. The [Helm chart repository](https://github.com/helm/charts) like Helm v2 is in "maintenance mode" and will be deprecated by November 13, 2020. See the [project status](https://github.com/helm/charts#status-of-the-project) for more details.
-
-1. Add `helm101` repo:
+   > Note: Les depôts de graphique ne sont pas installés par défaut avec Helm v3. Il est nécessaire que vous ajoutiez les deoôts pour les graphiques que vous voulez utilisez. Le [Helm Hub](https://hub.helm.sh) fournit une recherche centralisé pour les graphiques publics distribués. Utilisant le hub pour identifier le graphique et le dépôts qui l'heberge et l'ajouter à votre liste de dépôt locale. 
+   
+1. Ajouter le dépôt `helm101`:
 
    ```console
    helm repo add helm101 https://ibm.github.io/helm101/
    ```
 
-   Should generate an output as follows:
+   Vous devriez avoir un retour similaire au suivant :
 
    ```console
    $ helm repo add helm101 https://ibm.github.io/helm101/
    "helm101" has been added to your repositories
    ```
 
-   You can also search your repositories for charts by running the following command:
+   Vous pouvez aussi chercher dans vos dépôts les graphiques en utilisant la commande suivante :
 
    ```console
    helm search repo helm101
@@ -50,23 +50,23 @@ In this part of the lab, we show you how to install the `guestbook` chart from t
    helm101/guestbook 0.2.1                      A Helm chart to deploy Guestbook three tier web...
    ```
 
-1. Install the chart
+1. Installer le graphique
 
-   As mentioned we are going to install the `guestbook` chart from the [Helm101 repo](https://ibm.github.io/helm101/). As the repo is added to our local respoitory list we can reference the chart using the `repo name/chart name`, in other words `helm101/guestbook`. To see this in action, you will install the application to a new namespace called `repo-demo`.
+   Comme expliqué, nous allons installer le graphique `guestbook` depuis [Helm101 repo](https://ibm.github.io/helm101/). Comme le dépôt est ajouté à votre liste de dépôts locaux, on peut récupérer le graphique en utilisant `repo name/chart name`, en d'autres termes `helm101/guestbook`. Pour le voir en action, nous installerons l'application dans un nouvel espace de nom appelé `repo-demo`.
 
-   If the `repo-demo` namespace does not exist, create it using:
+   Si l'espace de nom `repo-demo` n'existe pas, créer le en utilisant :
 
    ```console
    kubectl create namespace repo-demo
    ```
 
-   Now install the chart using this command:
+   Installons le graphique en utilisant la commande :
 
    ```console
    helm install guestbook-demo helm101/guestbook --namespace repo-demo
    ```
 
-   The output should be similar to the following:
+   Vous devriez avoir un retour similaire au suivant :
 
    ```console
    $helm install guestbook-demo helm101/guestbook --namespace repo-demo
@@ -84,7 +84,7 @@ In this part of the lab, we show you how to install the `guestbook` chart from t
      echo http://$SERVICE_IP:3000
    ```
 
-   Check that release deployed as expected as follows:
+   Vérifiez que la release s'est déployée comme attendu avec la commande suivante :
 
    ```console
    $ helm list -n repo-demo
@@ -94,4 +94,4 @@ In this part of the lab, we show you how to install the `guestbook` chart from t
 
 ## Conclusion
 
-This lab provided you with a brief introduction to the Helm repositories to show how charts can be installed. The ability to share your chart means ease of use to both you and your consumers.
+Cette exercice permet une première approche des dépôts Helm pour voir comment les graphiques peuvent être installés. La possibilité de partager vos graphiques facilite l'utilisation pour vous et vos clients.
