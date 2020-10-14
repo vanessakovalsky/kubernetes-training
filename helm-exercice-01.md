@@ -1,22 +1,25 @@
-# Lab 1. I just want to deploy
+# Exercice 1 - Premier déploiement
 
-Let's investigate how Helm can help us focus on other things by letting a chart do the work for us. We'll first deploy an application to a Kubernetes cluster by using `kubectl` and then show how we can offload the work to a chart by deploying the same app with Helm.
+Nous allons voir comment Helm peut nous aider à rester concentrer en suivant un graphique qui fait le travail pour nous. Commençons avec le déploiement d'une application sur un kluster Kuberetes en utilisant `kubectl` puis nous verrons comment alléger notre travail en déployant la même application avec helm.
 
-The application is the [Guestbook App](https://github.com/IBM/guestbook), which is a sample multi-tier web application.
+L'application est [Guestbook App](https://github.com/IBM/guestbook),qui est une application web multi-tier d'exemple.
 
-## Scenario 1: Deploy the application using `kubectl`
+## Pré-requis
 
-In this part of the lab, we will deploy the application using the Kubernetes client `kubectl`. We will use [Version 1](https://github.com/IBM/guestbook/tree/master/v1) of the app for deploying here.
+Avoir un environnement Kubernetes installé et fonctionnel (voir exercice 1 - Installation) .
+Si vous ne pouvez pas installer en local, vous pouvez utiliser le bac à sable de KataCoda : https://www.katacoda.com/courses/kubernetes/playground
 
-If you already have a copy of the guestbook application installed from the [kube101 lab](https://github.com/IBM/kube101), skip this section and go the `helm` example in [Scenario 2](#scenario-2-deploy-the-application-using-helm).
+## Scenario 1: Deployiement de l'application en utilisant `kubectl`
 
-Clone the [Guestbook App](https://github.com/IBM/guestbook) repo to get the files:
+Dans cette partie de l'exercice, nous allons déployer l'application en utilisant le client Kubernetes `kubectl`. Nous utilisons la [Version 1](https://github.com/IBM/guestbook/tree/master/v1) de l'application pour ce déploiement :
+
+Cloner le dépôt [Guestbook App](https://github.com/IBM/guestbook) pour obtenir les fichiers:
 
 ```console
 git clone https://github.com/IBM/guestbook.git
 ```
 
-1. Use the configuration files in the cloned Git repository to deploy the containers and create services for them by using the following commands:
+1. Utiliser les fichiers de configurations du dépôt git cloné pour déployer les conteneurs et créers les services en utilisant les commandes suivantes ::
 
    ```console
    $ cd guestbook/v1
@@ -40,18 +43,17 @@ git clone https://github.com/IBM/guestbook.git
    service/guestbook created
    ```
 
-   Refer to the [guestbook README](https://github.com/IBM/guestbook) for more details.
 
-1. View the guestbook:
+1. Voir l'application:
 
-   You can now play with the guestbook that you just created by opening it in a browser (it might take a few moments for the guestbook to come up).
+   Vous pouvez maintenant jouer avec l'application guestbook en ouvrant un navigateur.
 
     * **Local Host:**
-    If you are running Kubernetes locally, view the guestbook by navigating to `http://localhost:3000` in your browser.
+    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : http://localhost:3000` dans votre navigateur
 
     * **Remote Host:**
 
-    1. To view the guestbook on a remote host, locate the external IP and port of the load balancer in the **EXTERNAL-IP** and **PORTS** columns of the `$ kubectl get services` output.
+    Pour voir le guestbook sur un hôte disant, trouver l'adresse I Pexterne et le port du load balancer dans les colonnes  **EXTERNAL-IP** et **PORTS** de la sortie de `$ kubectl get services`.
 
        ```console
        $ kubectl get services
@@ -74,11 +76,11 @@ git clone https://github.com/IBM/guestbook.git
 
        In this scenario the URL is `http://173.193.92.112:31838`.
 
-    2. Navigate to the output given (for example `http://50.23.5.136:31838`) in your browser. You should see the guestbook now displaying in your browser:
+    2. Aller à l'adresse récupérée en sortie dans votre navigateur (par exemple : `http://50.23.5.136:31838`) . Vous devriez voir le guestbook s'afficher dans votre navigateur
 
-       ![Guestbook](../images/guestbook-page.png)
+       ![Guestbook](https://github.com/IBM/helm101/tree/master/tutorial/images/guestbook-page.png)
 
-## Scenario 2: Deploy the application using Helm
+## Scenario 2: Déployer l'application en utilisant Helm
 
 In this part of the lab, we will deploy the application by using Helm. We will set a release name of `guestbook-demo` to distinguish it from the previous deployment. The Helm chart is available [here](../../charts/guestbook). Clone the [Helm 101](https://github.com/IBM/helm101) repo to get the files:
 
