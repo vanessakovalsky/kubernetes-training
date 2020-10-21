@@ -246,7 +246,7 @@ Par :
 ```
 * Relancer le déploiement avec
 ```
-kubectl apply -f deployment.yml` .
+kubectl apply -f deployment.yml
 ```
 * Les variables sont maintenant chargées depuis configmap et secret
 * Les pods ne sont pas recréés automatiquement lors des modification des secrets ou des configmaps.
