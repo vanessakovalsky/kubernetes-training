@@ -102,13 +102,13 @@ kubectl get nodes -o wide
 ```
 * On obtient un resultat comme celui-ci :
 ```
-NAME                                            STATUS    ROLES     AGE       VERSION        EXTERNAL-IP     OS-IMAGE                             KERNEL-VERSION   CONTAINER-RUNTIME
-gke-dcn-cluster-35-default-pool-dacbcf6d-3918   Ready     <none>    17h       v1.8.8-gke.0   35.205.22.139   Container-Optimized OS from Google   4.4.111+         docker://17.3.2
-gke-dcn-cluster-35-default-pool-dacbcf6d-c87z   Ready     <none>    17h       v1.8.8-gke.0   35.187.90.36    Container-Optimized OS from Google   4.4.111+         docker://17.3.2
+NAME       STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION      CONTAINER-RUNTIME
+minikube   Ready    master   18h   v1.19.2   192.168.49.2   <none>        Ubuntu 20.04 LTS   4.4.111+   docker://19.3.8
+
 ```
-* Il ne reste plus qu'à tester avec l'IP du Node concerné :
+* Il ne reste plus qu'à tester avec l'IP interne du Node concerné :
 ```
-curl -s 35.205.22.139:32593 | grep h1
+curl -s 192.168.49.2:32593 | grep h1
 ```
 * Qui devrait afficher :
 ```
