@@ -154,8 +154,6 @@ spec:
 ```
 kubectl describe pod liveness-exec
 ```  
-* Tous les code HTTP égal à 200 ou inférieur à 400 indique un succès. Tout autre code indique un échec.
-* Connectez vous au conteneur et créer un fichier healthz.html dans /usr/share/nginx/ 
 
 
 
@@ -164,6 +162,8 @@ kubectl describe pod liveness-exec
 
 
 Créer une nouvelle image du conteneur (avec docker) et pusher la sur le hub
+ * Connectez vous au conteneur et créer un fichier healthz.html dans /usr/share/nginx/ 
+
  * Créer un fichier healthz.html qui contient
 ```
 <html>
@@ -189,7 +189,8 @@ docker push vanessakovalsky/my-healtcheck:v1
 ```
 </details>
 
-* Créer un déploiement avec votre nouvelle image ajouter ces indicateurs en plus du reste pour spécifier une personnalisation des vérifications
+
+* Créer un déploiement avec votre nouvelle image (ou celle-ci si vous n'avez pas builder: vanessakovalsky/my-healtcheck ) ajouter ces indicateurs en plus du reste dans le manifest de deploiement pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
       httpGet:
