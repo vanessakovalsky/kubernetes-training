@@ -31,7 +31,7 @@ spec:
 * Créer une requete pour un volume provisionné dynamiquemenet pour nginx à partir du fichier  :
 
 ```shell
-$ kubectl create -f pvc-nginx.yaml
+$ kubectl create -f pvc-nginx.yml
 ```
 * Vérifier que le PVC existe et est fonctionnel :
 ```shell
