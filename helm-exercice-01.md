@@ -1,6 +1,6 @@
 # Exercice 1 - Premier déploiement
 
-Nous allons voir comment Helm peut nous aider à rester concentrer en suivant un graphique qui fait le travail pour nous. Commençons avec le déploiement d'une application sur un kluster Kuberetes en utilisant `kubectl` puis nous verrons comment alléger notre travail en déployant la même application avec helm.
+Nous allons voir comment Helm peut nous aider à rester concentrer en suivant un graphique qui fait le travail pour nous. Commençons avec le déploiement d'une application sur un cluster Kuberetes en utilisant `kubectl` puis nous verrons comment alléger notre travail en déployant la même application avec helm.
 
 L'application est [Guestbook App](https://github.com/IBM/guestbook),qui est une application web multi-tier d'exemple.
 
@@ -49,11 +49,11 @@ git clone https://github.com/IBM/guestbook.git
    Vous pouvez maintenant jouer avec l'application guestbook en ouvrant un navigateur.
 
     * **Local Host:**
-    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : http://localhost:3000` dans votre navigateur
+    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : `http://localhost:3000` dans votre navigateur
 
     * **Remote Host:**
 
-    Pour voir le guestbook sur un hôte disant, trouver l'adresse I Pexterne et le port du load balancer dans les colonnes  **EXTERNAL-IP** et **PORTS** de la sortie de `$ kubectl get services`.
+    Pour voir le guestbook sur un hôte disant, trouver l'adresse IP externe et le port du load balancer dans les colonnes  **EXTERNAL-IP** et **PORTS** de la sortie de `$ kubectl get services`.
 
        ```console
        $ kubectl get services
@@ -78,7 +78,7 @@ git clone https://github.com/IBM/guestbook.git
 
     2. Aller à l'adresse récupérée en sortie dans votre navigateur (par exemple : `http://50.23.5.136:31838`) . Vous devriez voir le guestbook s'afficher dans votre navigateur
 
-       ![Guestbook](https://github.com/IBM/helm101/blob/master/tutorial/images/guestbook-page.png?raw=true)
+       ![Guestbook](https://github.com/IBM/helm101/blob/master/docs/images/guestbook-page.png)
 
 ## Scenario 2: Déployer l'application en utilisant Helm
 
@@ -107,7 +107,7 @@ Un graphique est défini comme une collection de fichiers qui décrivent un set 
 └── values.yaml   \\ Les valeurs de configuration par défaut pour le graphique
 ```
 
-Note : les fichiers de templates montré ci-dessus seront rendus dans des fichiers manifest Kubernetes avant d'être envoyé au serveur d'API de Kubernetes. Ils correspondent aux fichiers manifests que nous avons déployés avec `kubectl` (sans les fichiers helpers et de notes)
+Note : les fichiers de templates montrés ci-dessus seront rendus dans des fichiers manifest Kubernetes avant d'être envoyé au serveur d'API de Kubernetes. Ils correspondent aux fichiers manifests que nous avons déployés avec `kubectl` (sans les fichiers helpers et de notes)
 
 Commençons l'installation du graphique. Si l'espace de nom `helm-demo` n'existe pas, vous devez le créer avec :
 
@@ -195,7 +195,7 @@ kubectl create namespace helm-demo
    Vous pouvez maintenant jouer avec l'application guestbook en ouvrant un navigateur.
 
     * **Local Host:**
-    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : http://localhost:3000` dans votre navigateur
+    Si vous utilisez Kubernetes en local, voir le guestbook en allant à l'adresse : `http://localhost:3000` dans votre navigateur
 
     * **Remote Host:**
 
@@ -209,7 +209,7 @@ kubectl create namespace helm-demo
 
        Combiner l'IP du service avec le port du service affiché précédemment. Dans ce scénario l'URL est :`http://50.23.5.136:31367`.
 
-       Note: Si aucune adresse IP externe n'est assigné, vous pouvez en obtenir une avec la commande suivante ::
+       Note: Si aucune adresse IP externe n'est assignée, vous pouvez en obtenir une avec la commande suivante ::
 
        ```console
        $ kubectl get nodes -o wide
@@ -225,5 +225,5 @@ kubectl create namespace helm-demo
 
 ## Conclusion
 
-Félicitations, vous avez déoloyoer une application en utilisant les deux méthodes différentes de Kubernetes. Avec cet exercice, vous voyez qu'utilisez Helm demande moins de commandes à penser (en lui donnant le chemin du graphique et pas des fichiers individuels) en comparaison avec l'utilisation de `kubectl`. La gestion des application de Helm simplifie la vie de l'utilisateur.
+Félicitations, vous avez déployer une application en utilisant les deux méthodes différentes de Kubernetes. Avec cet exercice, vous voyez qu'utilisez Helm demande moins de commandes à penser (en lui donnant le chemin du graphique et pas des fichiers individuels) en comparaison avec l'utilisation de `kubectl`. La gestion des application de Helm simplifie la vie de l'utilisateur.
 
