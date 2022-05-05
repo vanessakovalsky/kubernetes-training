@@ -182,7 +182,6 @@ kubectl apply -f deployment.yml
 deployment.extensions/envtest created
 ```
 * Exposer le déploiement avec node port pour vérifier que l'application se lance et utiliser curl sur l'adresse ip du cluster avec le port donnée par node port pour accéder au port 3000 de votre container
-Expose the deployment on a nodeport, so you can see the running container.
 
 **NB** Les valeurs par défaut présentes dans le dockerfile sont maintenant surchargé avec celles contenus dans le déploiement, cela permet de définir des valeurs différentes pour les différents environnements par exemple.
 
