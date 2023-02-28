@@ -115,9 +115,17 @@ curl -s 192.168.49.2:32593 | grep h1
 <h1>Welcome to nginx!</h1>
 ```
 * Nous pouvons maintenant accéder au POD, via l'IP du Node, ce qui signifie qu'il est nécessaire de fournir l'adresse IP du Node, hors celle-ci peut changer et donc devoir être modifié. 
+* NB : sur minikube avec docker il est nécessaire de se connecter au conteneur docker de minikube (docker exec -it minikube bash) pour accéder au node port
+* Il est aussi possible avec minikube d'utiliser la commande : `minikube service <SERVICENAME> --url` pour obtenir une url du service et l'ouvrir dans son navigateur 
 
 ### Load Balancer 
 Le service de type load balancer va permettre d'obtenir une adresse IP externe pour le cluster et ainsi d'accéder aux applications dans les pods, sans besoin de connaitre l'IP des nodes
+
+* NB : sur Minikube en local, aucun système de load balancing n'est en place, vous n'obtiendrez donc pas d'adresse IP externe (publique), si vous voulez en obtenir une il faut :
+* * soit utiliser un fournisseur de cloud qui inclut ce service 
+* * soit configurer un outil de load balancing en local (il est possible d'utiliser minikube tunnel, qui permet d'accèder sur l'hote de Minikube, donc dans nos exercices sur la VM, à l'adresse IP externe : https://minikube.sigs.k8s.io/docs/handbook/accessing/ )
+
+
 * On commence par supprimer l'ancien service :
 ```
 kubectl delete svc nginx
@@ -145,6 +153,3 @@ curl -s 35.205.60.29 | grep h1
 ```
 
 -> Félicitations vous savez ajouter des services et manipuler les bases du réseau de K8s
-* NB : sur Minikube en local, aucun système de load balancing n'est en place, vous n'obtiendrez donc pas d'adresse IP externe (publique), si vous voulez en obtenir une il faut :
-* * soit utiliser un fournisseur de cloud qui inclut ce service 
-* * soit configurer un outil de load balancing en local (il est possible d'utiliser minikube tunnel, qui permet d'accèder sur l'hote de Minikube, donc dans nos exercices sur la VM, à l'adresse IP externe : https://minikube.sigs.k8s.io/docs/handbook/accessing/ )
