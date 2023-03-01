@@ -190,15 +190,11 @@ docker push vanessakovalsky/my-healtcheck:v1
 </details>
 
 
-* Créer un déploiement avec votre nouvelle image (ou celle-ci si vous n'avez pas builder: vanessakovalsky/my-healtcheck ) ajouter ces indicateurs en plus du reste dans le manifest de deploiement pour spécifier une personnalisation des vérifications
+* Créer un déploiement avec votre nouvelle image (ou celle-ci si vous n'avez pas builder: vanessakovalsky/my-healtcheck /!\ a mettre le tag ) ajouter ces indicateurs en plus du reste dans le manifest de deploiement pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
       httpGet:
         path: /healthz.html #Your endpoint for health check.
-        port: 8080
-        httpHeaders:
-        - name: X-Custom-Header
-          value: Awesome
       initialDelaySeconds: 3
       periodSeconds: 3
 ```
