@@ -71,17 +71,11 @@ spec:
         containers:
           - name: liveness
             image: vanessakovalsky/my-healtcheck:v1
+            ports: 
+                - containerPort: 80
             livenessProbe:
               httpGet:
                 path: /healthz.html #Your endpoint for health check.
-                port: 8080
-              httpHeaders:
-                - name: X-Custom-Header
-                  value: Awesome
+                port: 80
               initialDelaySeconds: 3
               periodSeconds: 3
-        path: /healthz.html #Your endpoint for health check.
-        port: 8080
-        httpHeaders:
-        - name: X-Custom-Header
-          value: Awesome
