@@ -24,11 +24,11 @@ spec:
     metadata:
       labels:
         app: nginx      # label for replica selector to match
-        version: 1.7.9  # arbitrary label we can match on elsewhere
+        version: latest  # arbitrary label we can match on elsewhere
     spec:
       containers:
       - name: nginx
-        image: nginx:1.7.9
+        image: nginx
         ports:
         - containerPort: 80
  ```
