@@ -75,7 +75,7 @@ spec:
           claimName: pvc-nginx
       containers:
       - name: nginx
-        image: nginx:1.9.1
+        image: nginx:latest
         ports:
         - containerPort: 443
         - containerPort: 80
