@@ -1,4 +1,4 @@
-# Ajouter un volume, gérer la configuration des pods
+# Ajouter un volume et l'associer à des pods
 
 Cet exercice a pour objectifs :
 * d'ajouter un volume stockage et une requete vers ce volume de stockage depuis notre pod nginx
