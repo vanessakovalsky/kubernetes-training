@@ -8,7 +8,7 @@ Cet exercice a pour objetifs
 * Pour commencer nous allons lancer deux pods :
 ```
 kubectl create deployment multitool --image=praqma/network-multitool
-kubectl create deployment nginx --image=nginx:1.7.9
+kubectl create deployment nginx --image=nginx:1.26.0
 ```
 ### Utilisation de ClusterIP
 * Puis nous exposons le pod nginx sur le port 80 avec ClusterIP
