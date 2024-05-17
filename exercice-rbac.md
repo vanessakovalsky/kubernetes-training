@@ -112,18 +112,17 @@ roleRef:
 
 ## Agrégation de ClusterRoles
 
-L'API RBAC offre la possibilité d'agréger plusieurs ClusterRoles dans un ClusterRole "parapluie", ce qui peut simplifier la gestion des droits.
+* L'API RBAC offre la possibilité d'agréger plusieurs ClusterRoles dans un ClusterRole "parapluie", ce qui peut simplifier la gestion des droits.
 
-Nous allons créer les ClusterRole suivant :
+* Nous allons créer les ClusterRole suivant
+  * Un ClusterRole pod-viewer capable d'afficher les Pods
+  * Un ClusterRole service-viewer capable d'afficher les Services
+  * Un ClusterRole parapluie qui va agréger les deux précédents
 
-    Un ClusterRole pod-viewer capable d'afficher les Pods
-    Un ClusterRole service-viewer capable d'afficher les Services
-    Un ClusterRole parapluie qui va agréger les deux précédents
+* L'agrégation fonctionne par sélection de label.
 
-L'agrégation fonctionne par sélection de label.
-
-    Créer le ClusterRole parapluie.
-
+   * Créer le ClusterRole parapluie.
+```
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -133,9 +132,9 @@ aggregationRule:
   - matchLabels:
       aggregate-to-reviewer: "true"
 rules: []
-
-    Créer les ClusterRole à agréger, selon le modèle suivant.
-
+```
+   * Créer les ClusterRole à agréger, selon le modèle suivant.
+```
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -144,21 +143,22 @@ metadata:
     ...
 rules:
   ...
+```
 
-NetworkSecurityPolicies
+## NetworkSecurityPolicies
 
-Pour cet exercice, nous allons redéployer l'application echo-server ainsi que son Service, ceci dans 2 namespaces différents. L'objectif sera de bloquer tout le trafic entrant dans un premier temps, puis ouvrir l'accès au seul port du service echo-server.
+* Pour cet exercice, nous allons redéployer l'application echo-server ainsi que son Service, ceci dans 2 namespaces différents. L'objectif sera de bloquer tout le trafic entrant dans un premier temps, puis ouvrir l'accès au seul port du service echo-server.
 
-    Commencer par déployer l'application echo-server dans les deux namespace
-    Se connecter à l'intérieur du Pod du premier namespace et requêter l'echo-server de l'autre namespace.
-
+   * Commencer par déployer l'application echo-server dans les deux namespace
+   * Se connecter à l'intérieur du Pod du premier namespace et requêter l'echo-server de l'autre namespace.
+```
 kubectl exec -it <nom du pod> -n <premier namespace> /bin/sh
 curl echo-server.<second namespace>.svc.cluster.local
+```
+* La requête doit s'exécuter avec succès.
 
-La requête doit s'exécuter avec succès.
-
-Appliquer la NetworkSecurityPolicy par défaut dans le second namespace.
-
+* Appliquer la NetworkSecurityPolicy par défaut dans le second namespace.
+```
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -167,13 +167,13 @@ spec:
   podSelector: {}
   policyTypes:
   - Ingress
+```
+* À partir de maintenant, tout le trafic entrant doit être bloqué dans le second namespace (reproduire le test pour vérifier).
 
-À partir de maintenant, tout le trafic entrant doit être bloqué dans le second namespace (reproduire le test pour vérifier).
+* Il ne reste qu'à créer une autre NetworkSecurityPolicy pour ouvrir l'accès au port 8080 de l'echo-server du second namespace.
+   * Appliquer le manifeste suivant
 
-Il ne reste qu'à créer une autre NetworkSecurityPolicy pour ouvrir l'accès au port 8080 de l'echo-server du second namespace.
-
-    Appliquer le manifeste suivant
-
+```
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -192,11 +192,11 @@ spec:
     ports:
     - protocol: TCP
       port: ...
+```
+   * Ajouter tous les labels nécessaires
 
-    Ajouter tous les labels nécessaires
+* Reproduire le test précédent, la requête doit fonctionner.
 
-Reproduire le test précédent, la requête doit fonctionner.
-
-    Pour vérifier que le reste du trafic est bien bloqué, on peut changer le port de l'echo-server et reproduire le test.
+* Pour vérifier que le reste du trafic est bien bloqué, on peut changer le port de l'echo-server et reproduire le test.
 
 
