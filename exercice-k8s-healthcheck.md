@@ -20,7 +20,7 @@ metadata:
 spec:
   containers:
   - name: liveness
-    image: gcr.io/google_containers/busybox
+    image: busybox
     args:
     - /bin/sh
     - -c
