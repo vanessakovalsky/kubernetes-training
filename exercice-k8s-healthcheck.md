@@ -81,6 +81,7 @@ docker push vanessakovalsky/my-healtcheck:v1
   livenessProbe:
       httpGet:
         path: /healthz.html #Your endpoint for health check.
+        port: 80
       initialDelaySeconds: 3
       periodSeconds: 3
 ```
