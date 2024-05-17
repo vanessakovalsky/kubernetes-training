@@ -76,7 +76,7 @@ docker push vanessakovalsky/my-healtcheck:v1
 </details>
 
 
-* Créer un déploiement avec votre nouvelle image (ou celle-ci si vous n'avez pas builder: vanessakovalsky/my-healtcheck /!\ a mettre le tag ) ajouter ces indicateurs en plus du reste dans le manifest de deploiement pour spécifier une personnalisation des vérifications
+* Créer un déploiement avec votre nouvelle image (ou celle-ci si vous n'avez pas builder: vanessakovalsky/my-healtcheck:v1 /!\ a mettre le tag ) ajouter ces indicateurs en plus du reste dans le manifest de deploiement pour spécifier une personnalisation des vérifications
 ```
   livenessProbe:
       httpGet:
