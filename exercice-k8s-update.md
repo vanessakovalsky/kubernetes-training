@@ -13,7 +13,7 @@ kubectl scale deployment nginx --replicas=4
 * Mettre à jour l'image utilisé pour le déploiement 
 
 ```shell 
-kubectl set image deployment nginx nginx=nginx:1.9.1 --record
+kubectl set image deployment nginx nginx=nginx:1.24.0 --record
 ```
 * Vérifer le statut du rollout
 ```shell
@@ -25,7 +25,7 @@ kubectl rollout status deployment nginx
 kubectl rollout history deployment nginx
 ```
 * Essayer de répeter la mise à jour de l'image avec la commande set image. Quelques suggestions de versions d'images utilisables :
- 1.12.2, 1.13.12, 1.14.1, 1.15.2.
+ 1.25.1, 1.24.3, 1.26.0
 * Vérifier ce qu'il se passe avec :
 ```shell
 $ kubectl get pods
