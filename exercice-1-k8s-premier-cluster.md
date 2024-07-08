@@ -11,6 +11,18 @@ Nous allons avoir besoin de différents outils pour faire fonctionner Kubernetes
 * kubectl, pour l'interface ligne de commande (CLI) : https://kubernetes.io/fr/docs/tasks/tools/install-kubectl/ 
 * un moteur de conteneur de type docker : https://docs.docker.com/get-docker/ ou un hyperviseur de type virtualbox : https://www.virtualbox.org/wiki/Downloads 
 * Minkube pour lancer et manipuler les clusters : https://kubernetes.io/fr/docs/tasks/tools/install-minikube/
+
+## Installation avec chocolatey sur Windows :
+
+* Installer Chocolatey (gestionnaire de paquet) sur Windows en suivant les instructions ici : https://chocolatey.org/install#individual 
+* Une fois installé, ouvrir un power shell et taper les commandes suivantes :
+
+```
+choco install docker-desktop
+choco install kubernetes-cli
+choco install minikube
+```
+ 
 * Pour vérifier que cela fonctionne : 
 ```
 minikube start --driver=docker
