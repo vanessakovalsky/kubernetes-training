@@ -33,11 +33,7 @@ spec:
         - containerPort: 80
  ```
  * Ajouter au sein du même fichier le deuxième déploiement des exercices précédents (pour rappel, les objets doivent être séparés avec --- )
- * Ajouter au sein du même fichier le service de type loadbalancer pour créer le service (la syntaxe est dans le support de cours, ou sur la doc de K8S : https://kubernetes.io/fr/docs/concepts/services-networking/service/#loadbalancer )
- * Vous pouvez générer le fichier à partir de la commande impérative avec :
- ```
- kubectl expose deployment nginx --port 80 --type NodePort --dry-run -o yaml > service-nodeport.yaml
-```
+
 
  ## Execution de notre fichier de déploiement
  * Pour lancer le fichier
@@ -51,9 +47,5 @@ spec:
  * Vérifier les pods avec :
  ```
  kubectl get pods
- ```
- * Vérifier les services avec :
- ```
- kubectl get svc
  ```
  * -> Vous savez maintenant déployer plusieurs ressources à partirs d'un seul fichier déclaratif
