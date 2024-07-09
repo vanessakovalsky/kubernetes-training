@@ -19,7 +19,7 @@ Dans le code source cela est représenté par :
   const language = process.env.LANGUAGE;
   const API_KEY = process.env.API_KEY;
 ```
-* Pour lire les variables d'environnement il faut les définir dans le container via son image. C'est ce que l'on fait avec le Dockerfil suivant (à créer du coup)
+* Pour lire les variables d'environnement il faut les définir dans le container via son image. C'est ce que l'on fait avec le Dockerfile suivant (l'image est construite ici : https://hub.docker.com/r/praqma/secrets-demo/tags ) qui injecte des variables d'environnements --> rien à faire de votre côté, il s'agit seulement d'information sur le fonctionnement des images dockers et de leur variables d'environnement
 ```shell
 FROM node:9.1.0-alpine
 EXPOSE 3000
