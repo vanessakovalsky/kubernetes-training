@@ -21,6 +21,7 @@ Nous allons avoir besoin de différents outils pour faire fonctionner Kubernetes
 choco install docker-desktop
 choco install kubernetes-cli
 choco install minikube
+choco install diffutils # sert pour utiliser la commande kubectl diff
 ```
  
 * Pour vérifier que cela fonctionne : 
