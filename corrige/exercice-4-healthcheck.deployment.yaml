@@ -11,7 +11,7 @@ spec:
       app: nginx
   template:
     metadata:
-   labels:
+     labels:
         app: nginx      # label for replica selector to match
         version: 1.7.9  # arbitrary label we can match on elsewhere
     spec:
