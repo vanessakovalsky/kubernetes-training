@@ -32,7 +32,7 @@ spec:
         ports:
         - containerPort: 80
  ```
- * Ajouter au sein du même fichier le deuxième déploiement des exercices précédents (pour rappel, les objets doivent être séparés avec --- )
+ * Ajouter au sein du même fichier le deuxième déploiement des exercices précédents (multitool) (pour rappel, les objets doivent être séparés avec --- )
 
 
  ## Execution de notre fichier de déploiement
