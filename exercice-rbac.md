@@ -1,5 +1,8 @@
 # Gestion des rôles et des droits
 
+## Pré-requis
+
+Les manipulations suivantes sont faite sur un cluster configuré avec un certificat déjà existant, elles ne sont pas directement possible avec Minikube
 
 ## Création d'un ServiceAccount
 
@@ -200,3 +203,65 @@ spec:
 * Pour vérifier que le reste du trafic est bien bloqué, on peut changer le port de l'echo-server et reproduire le test.
 
 
+## Configurer le RBAC avec Minikube sous Linux :
+
+```
+ generate keys which will be used for authenticating to Kubernetes
+openssl genrsa -out vanessa.key 2048
+openssl req -new -key vanessa.key -out lukasz.csr -subj "/CN=vanessa/O=kteam"
+# use minikube cert to sign it
+openssl x509 -req -in vanessa.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out vanessa.crt -days 365
+
+# set credentials of vanessa user to user certs
+kubectl config set-credentials vanessa --client-certificate=vanessa.crt --client-key=vanessa.key
+
+# add lukasz-context for cluster minikube and user vanessa
+kubectl config set-context vanessa-context --cluster=minikube --user=vanessa
+
+cat <<EOF > role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+EOF
+kubectl apply -f role.yaml
+
+cat <<EOF > role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: default
+  name: read-pods
+subjects:
+- kind: User
+  name: vanessa
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+EOF
+kubectl apply -f role-binding.yaml
+
+# as current minikube user
+kubectl get services
+
+# change to vanessa user
+kubectl config use-context vanessa-context
+
+# test getting pods from default namespace
+kubectl get pods
+
+# test getting pods from all namespaces
+kubectl get pods -A
+Error from server (Forbidden): pods is forbidden: User "vanessa" cannot list resource "pods" in API group "" at the cluster scope
+
+# test getting services
+kubectl get services -A
+Error from server (Forbidden): services is forbidden: User "vanessa" cannot list resource "services" in API group "" at the cluster scope
+``` 
