@@ -206,7 +206,7 @@ spec:
 ## Configurer le RBAC avec Minikube sous Linux :
 
 ```
- generate keys which will be used for authenticating to Kubernetes
+#generate keys which will be used for authenticating to Kubernetes
 openssl genrsa -out vanessa.key 2048
 openssl req -new -key vanessa.key -out lukasz.csr -subj "/CN=vanessa/O=kteam"
 # use minikube cert to sign it
