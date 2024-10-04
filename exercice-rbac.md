@@ -208,14 +208,14 @@ spec:
 ```
 #generate keys which will be used for authenticating to Kubernetes
 openssl genrsa -out vanessa.key 2048
-openssl req -new -key vanessa.key -out lukasz.csr -subj "/CN=vanessa/O=kteam"
+openssl req -new -key vanessa.key -out vanessa.csr -subj "/CN=vanessa/O=kteam"
 # use minikube cert to sign it
 openssl x509 -req -in vanessa.csr -CA ~/.minikube/ca.crt -CAkey ~/.minikube/ca.key -CAcreateserial -out vanessa.crt -days 365
 
 # set credentials of vanessa user to user certs
 kubectl config set-credentials vanessa --client-certificate=vanessa.crt --client-key=vanessa.key
 
-# add lukasz-context for cluster minikube and user vanessa
+# add vanessa-context for cluster minikube and user vanessa
 kubectl config set-context vanessa-context --cluster=minikube --user=vanessa
 
 cat <<EOF > role.yaml
