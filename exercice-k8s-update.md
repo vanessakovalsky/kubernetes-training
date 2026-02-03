@@ -49,5 +49,5 @@ kubectl rollout undo deployment nginx
 ```
 * Vérifier les pods en cours d'execution :
 ```shell
-$ kubectl get pods
+kubectl get pods
 ```
