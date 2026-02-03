@@ -26,7 +26,7 @@ kubectl rollout status deployment nginx
 kubectl rollout history deployment nginx
 ```
 * Essayer de répeter la mise à jour de l'image avec la commande set image. Quelques suggestions de versions d'images utilisables :
- 1.25.1, 1.24.3, 1.26.0
+ 1.25.1, 1.24.0, 1.26.0
 * Vérifier ce qu'il se passe avec :
 ```shell
 $ kubectl get pods
