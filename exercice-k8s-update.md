@@ -35,7 +35,8 @@ $ kubectl get pods
 ### Annuler une mise à jour 
 * Faire une mise à jour avec une image qui n'existe pas :
 ```shell
-kubectl set image deployment nginx nginx=nginx:100.200.300 --record
+kubectl set image deployment nginx nginx=nginx:100.200.300
+kubectl annotate deployment nginx kubernetes.io/change-cause="version change to broken version" --overwrite=true
 ```
 * Cela entraine le non fonctionnement de certaint pods
 * On peut vérifier ce qu'il s'est passé avec :
