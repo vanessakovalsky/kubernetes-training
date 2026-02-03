@@ -13,7 +13,8 @@ kubectl scale deployment nginx --replicas=4
 * Mettre à jour l'image utilisé pour le déploiement 
 
 ```shell 
-kubectl set image deployment nginx nginx=nginx:1.24.0 --record
+kubectl set image deployment nginx nginx=nginx:1.24.0
+kubectl annotate deployment nginx kubernetes.io/change-cause="version change from latest to 1.24.0 - training purpose" --overwrite=true
 ```
 * Vérifer le statut du rollout
 ```shell
